@@ -1,0 +1,67 @@
+{% extends 'listados.html' %}
+{% block movimientos %} active {% endblock %}
+{% load static %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+
+{% endblock %}
+{% block extra_css %}
+<style>
+    .mipdf {
+        background-color: burlywood !important;
+    }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+{% endblock %}
+{% block filtros %}
+<fieldset class="scheduler-border" id="fil">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+        <div class="form-group  col-md-12 mb-0">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-movimientos'></select>
+        </div>
+    </div>
+</fieldset>
+<br>
+
+{% endblock %}
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th><input type="checkbox" title="Selecciona todos los movimientos mostrados" class="seleccionarTodosMovimientos todos" name="seleccionarTodosMovimientos" value="all"></th>
+    <th scope="col" style="width: ">Distrito</th>
+    <th scope="col" style="width: ">Tipo de movimiento</th>
+    <th scope="col" style="width: ">Personal empleado</th>
+    <th scope="col" style="width: ">Vehículos utilizados</th>
+    <th scope="col" style="width: ">Inicia el movimiento</th>
+    <th scope="col" style="width: ">Finaliza el movimiento</th>
+    <th scope="col" style="width: ">Acciones</th>
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% if perms.AppElecciones.add_movimientos %}
+<a href="{{ crear_url }}" class="btn btn-primary btn-with-icon">
+    <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+        <span class="pd-x-5">Agregar</span>
+    </div>
+</a>
+{% endif %}
+
+<!--<a href="" class="btn btn-info btn-with-icon">-->
+<!--    <div class="ht-40">-->
+<!--        <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>-->
+<!--        <span class="pd-x-5">Exportar a Excel</span>-->
+<!--    </div>-->
+<!--</a>-->
+
+<!--<i data-toggle="tooltip" data-placement="right" title="Exporta TODO el listado de los distritos sin tener en cuenta los filtros. Para aplicar filtros en Excel seleccione la primer
+fila (Los encabezados), luego vaya a la opción Ordenar y Filtrar y elija Filtro" class="fas fa-info-circle"
+    style="font-size:15px;color:skyblue"></i>-->
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">{% include 'AppElecciones/js_templates/movimientos/listado-movimientos.js' %}</script>
+{% endblock %}

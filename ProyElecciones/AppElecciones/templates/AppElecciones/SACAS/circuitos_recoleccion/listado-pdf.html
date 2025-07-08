@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+    .img-invoice {
+        width: 50px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .bomba {
+        background-color: red;
+    }
+</style>
+
+<body>
+    <img src="{{ logo }}" class="img-invoice">
+    <p class="head">
+        <b>ESTADO MAYOR CONJUNTO DE LAS FUERZAS ARMADAS</b><br>
+        <b>COMANDO OPERACIONAL - TABLERO DE COMANDO - MÓDULO ELECTORAL</b><br>
+        <b>DISTRITO ELECTORAL: {{ distrito }}</b><br>
+    <p class="text-center"><b>LISTADO DE CIRCUITOS DE RECOLECCIÓN DE SACAS</b></p>
+
+    <table id="invoice">
+        <thead>
+            <tr>
+                <th style="width: 10%;">CIRCUITO</th>
+                <th style="width: 25%;">CANTIDAD DE PERSONAL</th>
+                <th style="width: 15%;">VEHÍCULO</th>
+                <th style="width: 30%;">ESTADO</th>
+                <th style="width: 20%;">FECHA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in lista_crs_a_imprimir %}
+            <tr style="border-top: 1px solid black; padding-top: 4px;">
+                <td class="text-left">{{ d.ctrs }}</td>
+                <td class="text-left">{{ d.cant_personal }}</td>
+                <td class="text-left">{{ d.vehiculo }}</td>
+                <td class="text-left">{{ d.estado }}</td>
+                <td class="text-left">{{ d.fecha | date:' d/m/Y H:i' }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends 'eliminarBase.html' %}
+{% block titulo_eliminar %}
+<p>Esta seguro de eliminar el Circuito "{{ object.circuito }}" ?</p>
+{% endblock %}
+{% block boton_volver %}
+
+
+
+<a href="{% url 'listado-de-circuitos-filtrados' %}" class="btn btn-secondary btn-with-icon">
+  <div class="ht-40">
+    <span class="icon wd-40"><i class="fas fa-times"></i></span>
+    <span class="pd-x-5">Cancelar</span>
+  </div>
+</a>
+
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block novedades %} active {% endblock %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+{% block cabecera %}
+    {{ form.media }}
+    {% load leaflet_tags %}
+    {% leaflet_js plugins="buscador"%}
+    {% leaflet_css plugins="buscador"%}
+{% endblock %}
+
+{% block titulo %}
+<h4>{{ titulo }} {{object.tipo}}</h4>
+{% endblock  %}
+{% block extra_css %}
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+{% endblock  %}
+{% block contenido %}
+<div class="form-row">
+   <div class="form-group col-md-12 mb-0">
+      <fieldset class="scheduler-border">
+        <legend class="scheduler-border filtros">Datos de la novedad</legend>
+       <br>
+        <div class="form-row">
+          <div class="form-group col-md-6 mb-0">
+            <h4><p>Distrito: {{ object.distrito }}</p></h4>
+          </div>
+          <div class="form-group col-md-6 mb-0">
+            <h4><p>Fecha de la novedad: {{ object.fecha }}</p></h4>
+          </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+                <h5><p>Detalle: <span class="mostrar">{{ object.detalle }}</span></p></h5>
+              </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-12 mb-0">
+                <h5><p>Subsanada: <span class="mostrar">{{ object.subsanada }}</span></p></h5>
+              </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-12 mb-0">
+            <h5><p>Medidas adoptadas: <span class="mostrar">{{ object.medidas_adoptadas }}</span></p></h5>
+          </div>
+
+        </div>
+
+
+        <div class="form-row">
+          <div class="form-group col-md-6 mb-0">
+            {% if object.ubicacion.y %}
+            <p>Latitud: {{ object.ubicacion.y }}</p>
+            {% else %}
+            <p>Latitud: Sin dato</p>
+            {% endif %}
+          </div>
+          <div class="form-group col-md-6 mb-0">
+            {% if object.ubicacion.x %}
+            <p>Longitud: {{ object.ubicacion.x }}</p>
+            {% else %}
+            <p>Longitud: Sin dato</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-12 mb-0">
+            {% leaflet_map "yourmap" %}
+          </div>
+        </div>
+      </fieldset><br>
+<!--      <a href="{% url 'actualizar-novedades-generales' object.id %}" class="btn btn-info btn-with-icon">-->
+<!--        <div class="ht-40">-->
+<!--          <span class="icon wd-40"><i class="fas fa-edit" ></i></span>-->
+<!--          <span class="pd-x-5">Editar</span>-->
+<!--        </div>-->
+<!--      </a>-->
+<!--      <a href="{% url 'eliminar-novedades-generales' object.id %}" class="btn btn-danger btn-with-icon">-->
+<!--        <div class="ht-40">-->
+<!--          <span class="icon wd-40"><i class="fas fa-trash-alt " ></i></span>-->
+<!--          <span class="pd-x-5">Eliminar</span>-->
+<!--        </div>-->
+<!--      </a>-->
+
+    </div>
+</div>
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+    $(window).on('map:init', function (e) {
+      var detail = e.detail;
+      //Pagina para configurar geoserarch
+      //https://stackoverflow.com/questions/52588652/how-to-add-leaflet-geosearch-control-in-django-admin
+      const search = new GeoSearch.GeoSearchControl({
+        //provider: new GeoSearch.OpenStreetMapProvider(),
+        provider: new GeoSearch.EsriProvider(),
+        searchLabel: 'Ingrese la dirección...',
+        notFoundMessage: 'No hay resultados',
+        retainZoomLevel: true,
+        showMarker: true,
+        selected: 0,
+        autoClose: true,
+        keepResult: true
+      });
+      detail.map.addControl(search);
+      let longitud = parseFloat({{ object.ubicacion.x | safe }})
+    let latitud = parseFloat({{ object.ubicacion.y | safe }})
+  
+    detail.map.setView([latitud, longitud], 18);
+    L.marker([latitud, longitud]).addTo(detail.map);
+    });
+
+    
+  </script>
+{% endblock %}

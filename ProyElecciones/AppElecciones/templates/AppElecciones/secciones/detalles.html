@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% block secciones %} active {% endblock %}
+{% load guardian_tags %}
+
+{% load static %}
+{% block titulo %}
+<h4>{{ titulo }} {{object.seccion}}</h4>
+{% endblock %}
+{% block extra_css %}
+<style>
+  .nav-pills .nav-link.active,
+  .show>.nav-pills .nav-link {
+    /*background: #000000 !important*/
+    background: rgb(23, 162, 184);
+  }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+{% endblock %}
+{% block contenido %}
+<!--Resumen de datos de la sección, seguridad, novedade y votos-->
+<div class="form-row">
+  <div class="form-group col-md-12 mb-0">
+    <fieldset class="scheduler-border">
+      <legend class="scheduler-border filtros">Resumen de información</legend>
+
+      <a href="{{ listado_url }}" class="btn btn-success btn-with-icon">
+        <div class="ht-40">
+          <span class="icon wd-40"><i class="fas fa-sync"></i></span>
+          <span class="pd-x-5">Actualizar resumen</span>
+        </div>
+      </a>
+      <p></p>
+
+      <div class="form-row">
+        <div class="form-group col-md-3 mb-0">
+          <p>Sección: {{ object.seccion }}</p>
+        </div>
+        <div class="form-group col-md-3 mb-0">
+          <p>Detalles: {{ object.detalle }}</p>
+        </div>
+        <div class="form-group col-md-3 mb-0">
+          <p>Distrito: {{ object.distrito }}</p>
+        </div>
+        <div class="form-group col-md-3 mb-0">
+          <p>Subdistrito: {{ object.subdistrito }}</p>
+        </div>
+      </div>
+      <!--tarjetas- https://ajgallego.gitbook.io/bootstrap-4/sistema-de-rejilla/alineacion-->
+      <div class="row row-sm mg-b-20 ">
+        <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+          <div class="bg-info rounded overflow-hidden">
+            <br>
+            <div class="container">
+              <div class="row ">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-3 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Personal</p>
+                </div>
+              </div>
+              <div class="row align-items-center justify-content-center">
+                <div class="col">
+                  <i class="icon ion-person-stalker tx-60 lh-0 tx-white-8"></i>
+                </div>
+                <div class="col">
+                  <span class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="total_personal_seccion"></span>
+                </div>
+              </div>
+              <div class="row justify-content-end">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-white-8 mg-b-10">Orgánica</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="organico_esta_seccion"></p>
+                </div>
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-white-8 mg-b-10">Seg Interna<locales>
+                  </p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="seg_interna"></p>
+                </div>
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-white-8 mg-b-10">Seg Externa</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="seg_externa"></p>
+                </div>
+              </div>
+            </div>
+            <br>
+          </div>
+        </div><!-- col-3 -->
+        <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+          <div class="bg-purple rounded overflow-hidden">
+            <br>
+            <div class="container">
+              <div class="row ">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-3 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Organización</p>
+                </div>
+              </div>
+              <div class="row align-items-center justify-content-center">
+                <div class="col">
+                  <i class="icon ion-ios-keypad tx-60 lh-0 tx-white-8"></i>
+                </div>
+                <div class="col">
+                  <!--<span class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="organizacion"></span>-->
+                  <span class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1"></span>
+                </div>
+              </div>
+              <div class="row justify-content-end">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Circuitos</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="cant_circuitos"></p>
+                </div>
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Locales</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="cant_locales"></p>
+                </div>
+              </div>
+            </div>
+            <br>
+          </div>
+        </div><!-- col-3 -->
+        <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0">
+          <div class="bg-teal rounded overflow-hidden">
+            <br>
+            <div class="container">
+              <div class="row ">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-3 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Noveades en locales
+                  </p>
+                </div>
+              </div>
+              <div class="row align-items-center justify-content-center">
+                <div class="col">
+                  <i class="ion ion-calendar tx-60 lh-0 tx-white-8"></i>
+                </div>
+                <div class="col">
+                  <span class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="cant_novedades"></span>
+                </div>
+              </div>
+              <div class="row justify-content-end">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Baja</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="nov_baja"></p>
+                </div>
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Media</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="nov_media"></p>
+                </div>
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Alta</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="nov_alta"></p>
+                </div>
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Crítica</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="nov_critica"></p>
+                </div>
+              </div>
+            </div>
+            <br>
+          </div>
+        </div><!-- col-3 -->
+        <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0">
+          <div class="bg-primary rounded overflow-hidden">
+            <br>
+            <div class="container">
+              <div class="row ">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-3 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Vehículos
+                  </p>
+                </div>
+              </div>
+              <div class="row align-items-center justify-content-center">
+                <div class="col">
+                  <i class="ion ion-android-car tx-60 lh-0 tx-white-8"></i>
+                </div>
+                <div class="col">
+                  <span class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="total_vehiculos"></span>
+                </div>
+              </div>
+              <div class="row justify-content-end">
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Propios</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="veh_propios"></p>
+                </div>
+                <div class="col">
+                  <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">Contratados</p>
+                  <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="veh_contratados"></p>
+                </div>
+              </div>
+            </div>
+            <br>
+
+          </div>
+        </div><!-- col-3 -->
+      </div>
+    </fieldset>
+  </div>
+</div>
+
+<!--Dist de personal, Vehiculos provistor y Vehículos Contratados-->
+<div class="form-row">
+  <div class="form-group col-md-12 mb-0">
+    <fieldset class="scheduler-border">
+      <legend class="scheduler-border filtros">Distribución de Personal y Empleo de vehículos Provistos y Contratados</legend>
+      <!--El complemento de pestañas también funciona con píldoras--ese usar-combinarlo para centrarlos y demas-->
+      <!--https://getbootstrap.com/docs/4.5/components/navs/#vertical-->
+      <!--<ul class="nav  nav-pills justify-content-center nav-fill mb-3" id="pills-tab" role="tablist">-->
+      <ul class="nav nav-tabs nav-pills nav-fill" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="pills-organizacion-tab" data-toggle="pill" href="#pills-organizacion"
+            role="tab" aria-controls="pills-organizacion" aria-selected="true">Distribución de Personal</a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="pills-vpropios-tab" data-toggle="pill" href="#pills-vpropios" role="tab"
+            aria-controls="pills-vpropios" aria-selected="false">Empleo de vehículos provistos</a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="pills-vcontratados-tab" data-toggle="pill" href="#pills-vcontratados" role="tab"
+            aria-controls="pills-vcontratados" aria-selected="false">Empleo de vehículos contratados</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-organizacion" role="tabpanel"
+          aria-labelledby="pills-organizacion-tab">
+          <br>
+          <table class="table table-bordered" id="tabla-distribucion-personal-seccion" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col" style="">Cargo</th>
+                <th scope="col" style="">Designación</th>
+                <th scope="col" style="">Persona</th>
+                <th scope="col" style="">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+          <br>
+          {% get_obj_perms request.user for object as "permiso" %}
+          {% if "change_seccion" in permiso %}
+          <div class="btn btn-info btn-with-icon">
+            <div class="ht-40">
+              <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+              <button type="button" class="btn btn-info btn-flat" id="mostrar-formulario-organizacion-seccion"
+                data-url="{% url 'crear-organizacion-seccion'%}" data-toggle="modal" data-target="">
+                Agregar
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="tab-pane fade" id="pills-vpropios" role="tabpanel" aria-labelledby="pills-vpropios-tab">
+          <br>
+          <table class="table table-bordered" id="tabla-vehiculos-propios-seccion" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col" style="">Vehículo</th>
+                <th scope="col" style="">NI</th>
+                <th scope="col" style="">Zona de trabajo</th>
+<!--                <th scope="col" style="">conductor</th>-->
+                <th scope="col" style="">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+          <br>
+         {% if "change_seccion" in permiso %}
+          <div class="btn btn-info btn-with-icon">
+            <div class="ht-40">
+              <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+              <button type="button" class="btn btn-info btn-flat" id="agregar-vehiculos-propios-seccion"
+                data-url="{% url 'crear-vhpropios-seccion' %}" data-toggle="modal" data-target="#segexterna">
+                Agregar
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="tab-pane fade" id="pills-vcontratados" role="tabpanel" aria-labelledby="pills-vcontratados-tab">
+          <br>
+          <table class="table table-bordered" id="tabla-vehiculos-contratados-seccion" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col" style="">Vehículo</th>
+                <th scope="col" style="">Patente</th>
+                <th scope="col" style="">zona de trabajo</th>
+<!--                <th scope="col" style="">responsable</th>-->
+                <th scope="col" style="">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+
+            </tfoot>
+          </table>
+          <br>
+            {% if "change_seccion" in permiso %}
+          <div class="btn btn-info btn-with-icon">
+            <div class="ht-40">
+              <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+              <button type="button" class="btn btn-info btn-flat" id="agregar-vehiculos-contratados-seccion"
+                data-url="{% url 'crear-vhcontratados-seccion' %}" data-toggle="modal" data-target="#segexterna">
+                Agregar
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </fieldset>
+  </div>
+</div>
+{% endblock %}
+{% block extrajs %}
+
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/seccion/crud-distribucionpersonal-seccion.js' %}</script>
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/seccion/crud-veh-propios-seccion.js' %}</script>
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/seccion/crud-veh-contratados-seccion.js' %}</script>
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/seccion/resumen_tarjetas_seccion.js' %}</script>
+
+<!--El modal que se usa para al CRUD de Organización. Anular tabindex='-1' sino no funciona select2-->
+<div class="modal fade" id="modal-distribucion-personal-seccion">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+<!--El modal que se usara para al CRUD de los vehiculos propios-->
+<div class="modal fade" id="modal-vpropios-seccion">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+<!--El modal que se usara para al CRUD de los vehiculos contratados-->
+<div class="modal fade" id="modal-vcontratados-seccion">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+{% endblock %}

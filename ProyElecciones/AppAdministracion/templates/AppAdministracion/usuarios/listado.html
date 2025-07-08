@@ -1,0 +1,54 @@
+{% extends 'listados.html' %}
+
+{% block administracion %} active {% endblock %}
+{% block usuarios %} active {% endblock %}
+
+{% load static %}
+
+{% block extra_css %}{% endblock %}
+
+{% block titulo %}
+    <h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block resumenes %}{% endblock %}
+
+{% block cabecera_de_la_tabla %}
+<tr>
+
+    <th scope="col" style="">usuario</th>
+    <th scope="col" style="">Grado/Nombres</th>
+    <th scope="col" style="">Apellidos</th>
+    <th scope="col" style="">DNI</th>
+    <th scope="col" style="">Nro Tel</th>
+    <th scope="col" style="">ROL</th>
+    <th scope="col" style="">Organización</th>
+    <th scope="col" style="">Correo</th>
+    <th scope="col" style="">ingresó</th>
+    <th scope="col" style="">Fecha reset</th>
+    <th scope="col" style="">Tipo reser</th>
+    <th scope="col" style="">Resetear</th>
+    <th scope="col" style="">Acciones</th>
+</tr>
+
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+
+<a href="{{ crear_url }}" class="btn btn-primary btn-with-icon">
+    <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+        <span class="pd-x-5">Agregar usuarios</span>
+    </div>
+</a>
+<a href="{% url 'exportar-usuarios-excel' %}" class="btn btn-info btn-with-icon">
+    <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+        <span class="pd-x-5">Exportar a Excel</span>
+    </div>
+</a>
+{% endblock %}
+
+{% block extrajs %}
+    <script type="application/javascript">{% include 'AppAdministracion/js_templates/crud-usuarios.js' %}</script>
+{% endblock %}

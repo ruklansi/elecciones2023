@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block contenido %}
+<form method="post">{% csrf_token %}
+     <!--Sobreescribo el titulo de eliminar-->
+     {% block titulo_eliminar %}
+     {% endblock %}
+    <div class="btn btn-danger btn-with-icon">
+      <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-trash-alt"></i></span>
+        <button type="submit" class="btn btn-danger btn-flat">
+          Sí, estoy seguro
+      </button>
+      </div>
+    </div>
+      <!--Sobreescribo el boton volver para hacerlo al listado de cada nivel-->
+      {% block boton_volver %}
+      {% endblock %}
+  
+</form>
+{% endblock %}

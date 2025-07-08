@@ -1,0 +1,20 @@
+{% extends 'eliminarBase.html' %}
+{% block titulo_eliminar %}
+<p>Esta seguro de eliminar el Local "{{ object.nombre }}" ?. Tenga en cuanta que si tiene datos asociados no podrá
+  hacerlo.</p>
+{% endblock %}
+{% block boton_volver %}
+<a href={% if redirigir == 'validado' %} "{% url 'listado-de-locales-validados' %}" {% else %} "{% url 'listado-de-locales-novalidados' %}" {% endif%} class="btn btn-secondary btn-with-icon">
+  <div class="ht-40">
+    <span class="icon wd-40"><i class="fas fa-times"></i></span>
+    <span class="pd-x-5">Cancelar</span>
+  </div>
+</a>
+ <script type="text/javascript">
+     $(function () {
+
+     });
+ </script>
+{% endblock %}
+
+

@@ -1,0 +1,1 @@
+from .resumen_general import *

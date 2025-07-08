@@ -1,0 +1,465 @@
+{% extends 'base.html' %}
+{% block locales %} active {% endblock %}
+{% block locales_enmapa %} active {% endblock %}
+
+{% load static %}
+{% block cabecera %}
+{{ form.media }}
+{% load leaflet_tags %}
+{% leaflet_js plugins="buscador"%}
+{% leaflet_css plugins="buscador"%}
+{% endblock %}
+
+{% block titulo %}
+<h4>{{titulo}}</h4><br>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .estilo_en_mapa_total{
+    color: #ffffff;
+    font-size: 1.3125rem;
+  }
+  .estilo_en_mapa_validados{
+    color: rgb(153, 255, 153);;
+    font-size: 1.3125rem;
+  }
+  .estilo_en_mapa_validados1{
+    color: green;;
+    font-size: 1rem;
+  }
+  .estilo_en_mapa_no_validados{
+    color: rgb(255, 128, 128);;
+    font-size: 1.3125rem;
+  }
+  .estilo_en_mapa_no_validados1{
+    color: red;
+    font-size: 1rem;
+  }
+  .ayuda{
+    color: yellow;
+    /*font-size: 1rem;*/
+  }
+  .leaflet-container {  /* all maps */
+        width:  100%;
+        height: 400px;
+    }
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block contenido %}
+{{ es_o_tiene_subdistrito }}
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Mapa</legend>
+            <div class="form-row">
+
+                <div class="form-group  col-md-3 mb-0" id="dis">
+                    <label class="filtros">Distrito:</label>
+                    <select id='filtro-distrito-para-mapas' name="filtro-distrito-para-mapas"></select>
+                </div>
+
+
+                <div class="form-group  col-md-3 mb-0" id="sub">
+                    <label class="filtros">Subdistrito:</label>
+                    <select id='filtro-subdistrito-para-mapas' name='filtro-subdistrito-para-mapas'></select>
+                </div>
+
+                <div class="form-group  col-md-3 mb-0">
+                    <label class="filtros">Sección:</label>
+                    <select id='filtro-seccion-para-mapas' name='filtro-seccion-para-mapas'></select>
+                </div>
+                <div class="form-group  col-md-3 mb-0">
+                    <label class="filtros">Circuito:</label>
+                    <select id='filtro-circuito-para-mapas' name='filtro-circuito-para-mapas'></select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group estilo_en_mapa_total col-md-3 mb-0" id='cant_locales'></div>
+                <div class="form-group estilo_en_mapa_validados col-md-3 mb-0" id='cant_locales_validados'></div>
+                <div class="form-group estilo_en_mapa_no_validados col-md-3 mb-0" id='cant_locales_no_validados'></div>
+            </div>
+            <br>
+
+            <div class="form-row">
+                <div class="form-group col-md-12 mb-0">
+                    {% leaflet_map "yourmap" %}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<!--Segun en el link que sige hay q agregar asi para que django_select2.js del complemento q uso se debe importar aca sino no se carga-->
+<!--https://github.com/applegrew/django-select2/issues/356-->
+
+<script type="text/javascript">
+    var csrftoken = Cookies.get('csrftoken');
+    $(window).on('map:init', function (e) {
+      var detail = e.detail;
+
+      let cant_locales = ''
+      let cant_locales_validados = ''
+      let cant_locales_no_validados = ''
+      $('#cant_locales').hide()
+      $('#cant_locales_validados').hide()
+      $('#cant_locales_no_validados').hide()
+
+      //Si tiene el rol de Distrito y no tiene subdistrito oculto el desplegable del filtro de subdistrito
+      {% if request.user.rol == 3 and tiene_subdistrito == 'no' %}
+        $('#sub').hide()
+      {% endif %}
+       //Si tiene el rol de Subdistrito oculto el desplegable del filtro de distrito
+      {% if request.user.rol == 4  %}
+        $('#dis').hide()
+      {% endif %}
+
+
+
+        var select_subdistritos = '';
+        var select_secciones = '';
+        var select_circuitos = '';
+
+        var opciones_subdistritos = '';
+        var opciones_secciones = '';
+        var opciones_circuitos = '';
+
+        ///////Desplegable de Distritos//////////
+            let valores_distrito = '<option value="">Todos</option>';
+            let select_distritos_para_mapa = $('select[id="filtro-distrito-para-mapas"]')
+            $.ajax({
+                url: '{% url 'filtro-para-organizaciones' %}',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                data: {
+                    'accion': 'cargar-distritos'
+                },
+                dataType: 'json',
+            }).done(function (respuesta) {
+                if (!respuesta.hasOwnProperty('error')) {
+                    $.each(respuesta.datos, function (key, value) {
+                        valores_distrito += '<option value="' + value.id + '">' + value.distrito + '</option>';
+                    })
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ':' + errorThrown)
+            }).always(function (respuesta) {
+              select_distritos_para_mapa.html(valores_distrito);
+            });
+        ///////Fin desplegable de Distritos/////////
+
+
+        ///////Desplegable de Subdistritos - se carga solo para un usuario logueado como Subdistrito//////////
+            let valores_sub_distrito = '<option value="">Todos</option>';
+            let select_sub_distritos_para_mapa = $('select[id="filtro-subdistrito-para-mapas"]')
+            $.ajax({
+                url: '{% url 'filtro-para-organizaciones' %}',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                data: {
+                    'accion': 'cargar-subdistritos'
+                },
+                dataType: 'json',
+            }).done(function (respuesta) {
+                if (!respuesta.hasOwnProperty('error')) {
+
+                    $.each(respuesta.datos, function (key, value) {
+
+                        valores_sub_distrito += '<option value="' + value.id + '">' + value.subdistrito + '</option>';
+                    })
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ':' + errorThrown)
+            }).always(function (respuesta) {
+              select_sub_distritos_para_mapa.html(valores_sub_distrito);
+            });
+        ///////Fin desplegable de Subdistritos/////////
+
+
+
+        $('select[name="filtro-distrito-para-mapas"]').on('change', function () {
+            var id = $(this).val();
+
+            //Borro los locales que estaban en el mapa
+                    //https://stackoverflow.com/questions/44884664/leaflet-l-icon-marker-not-removing-on-map-reload
+                    detail.map.eachLayer(function (layer) {
+                        if (layer instanceof L.CircleMarker) {
+                            detail.map.removeLayer(layer);
+                        }
+                    });
+
+                    cant_locales = ''
+                    cant_locales_validados = ''
+                    cant_locales_no_validados = ''
+                    $('#cant_locales').hide()
+                    $('#cant_locales_validados').hide()
+                    $('#cant_locales_no_validados').hide()
+
+            select_subdistritos = $('select[name="filtro-subdistrito-para-mapas"]')
+            select_secciones = $('select[name="filtro-seccion-para-mapas"]')
+            select_circuitos = $('select[name="filtro-circuito-para-mapas"]')
+
+            opciones_subdistritos = '<option value="">Todos</option>';
+            opciones_secciones = '<option value="">Todos</option>';
+            opciones_circuitos = '<option value="">Todos</option>';
+
+            select_subdistritos.html(opciones_subdistritos)
+            select_secciones.html(opciones_secciones)
+            select_circuitos.html(opciones_circuitos)
+
+            if (id === '') {
+                select_subdistritos.html(opciones_subdistritos);
+                return false;
+            }
+            $.ajax({
+                url: "{% url 'filtro-para-organizaciones' %}",
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                data: {
+                    'accion': 'filtrar-subdistritos',
+                    'id': id
+                },
+                dataType: 'json',
+            }).done(function (respuesta) {
+                if (!respuesta.hasOwnProperty('error')) {
+                    if (respuesta.hay_subdistrito) {
+                        $('#sub').show();
+                        $('#filtro-subdistrito-en-local-validado').show();
+                        $.each(respuesta.datos, function (key, value) {
+                            opciones_subdistritos += '<option value="' + value.id + '">' + value.subdistrito + '</option>';
+                        })
+                    }
+                    if (!respuesta.hay_subdistrito) {
+                        $('#sub').hide();
+                        $('#filtro-subdistrito-en-local-validado').hide();
+                        $.each(respuesta.datos, function (key, value) {
+                            opciones_secciones += '<option value="' + value.id + '">' + value.seccion + '</option>';
+                        })
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ':' + errorThrown)
+            }).always(function (respuesta) {
+                select_subdistritos.html(opciones_subdistritos);
+                select_secciones.html(opciones_secciones);
+            })
+        });
+
+
+        $('select[name="filtro-subdistrito-para-mapas"]').on('change', function () {
+            var id = $(this).val();
+            //Borro los locales que estaban en el mapa
+                    //https://stackoverflow.com/questions/44884664/leaflet-l-icon-marker-not-removing-on-map-reload
+                    detail.map.eachLayer(function (layer) {
+                        if (layer instanceof L.CircleMarker) {
+                            detail.map.removeLayer(layer);
+                        }
+                    });
+                    cant_locales = ''
+                    cant_locales_validados = ''
+                    cant_locales_no_validados = ''
+                    $('#cant_locales').hide()
+                    $('#cant_locales_validados').hide()
+                    $('#cant_locales_no_validados').hide()
+            select_secciones = $('select[name="filtro-seccion-para-mapas"]')
+            select_circuitos = $('select[name="filtro-circuito-para-mapas"]')
+
+            opciones_secciones = '<option value="">Todas</option>';
+            opciones_circuitos = '<option value="">Todos</option>';
+
+            select_circuitos.html(opciones_circuitos)
+            if (id === '') {
+                select_secciones.html(opciones_secciones);
+                return false;
+            }
+            $.ajax({
+                url: "{% url 'filtro-para-organizaciones' %}",
+                type: 'POST',
+                 headers: { 'X-CSRFToken': csrftoken },
+                data: {
+                    'accion': 'filtrar-seccion',
+                    'id': id
+                },
+                dataType: 'json',
+            }).done(function (respuesta) {
+                if (!respuesta.hasOwnProperty('error')) {
+                    //console.log(respuesta)
+                    if (respuesta.hay_secciones) {
+                        //console.log(respuesta.datos)
+                        $.each(respuesta.datos, function (key, value) {
+                            opciones_secciones += '<option value="' + value.id + '">' + value.seccion + '</option>';
+                        })
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ':' + errorThrown)
+            }).always(function (respuesta) {
+                //console.log(opciones_sec_en_circuito)
+                select_secciones.html(opciones_secciones);
+            })
+        });
+
+
+        $('select[name="filtro-seccion-para-mapas"]').on('change', function () {
+            var id = $(this).val();
+
+            //Borro los locales que estaban en el mapa
+                    //https://stackoverflow.com/questions/44884664/leaflet-l-icon-marker-not-removing-on-map-reload
+                    detail.map.eachLayer(function (layer) {
+                        if (layer instanceof L.CircleMarker) {
+                            detail.map.removeLayer(layer);
+                        }
+                    });
+
+              let cant_locales = ''
+                    cant_locales_validados = ''
+                    cant_locales_no_validados = ''
+                    $('#cant_locales').hide()
+                    $('#cant_locales_validados').hide()
+                    $('#cant_locales_no_validados').hide()
+
+            select_circuitos = $('select[name="filtro-circuito-para-mapas"]')
+            // Sino se seleciono ningun id
+            opciones_circuitos = '<option value="">Todos</option>';
+            if (id === '') {
+                select_circuitos.html(opciones_circuitos);
+                return false;
+            }
+            $.ajax({
+                url: "{% url 'filtro-para-organizaciones' %}",
+                type: 'POST',
+                 headers: { 'X-CSRFToken': csrftoken },
+                data: {
+                    'accion': 'filtrar-circuito',
+                    'id': id
+                },
+                dataType: 'json',
+            }).done(function (respuesta) {
+                if (!respuesta.hasOwnProperty('error')) {
+                    //console.log(respuesta)
+
+                    if (respuesta.hay_circuitos) {
+                        //console.log(respuesta.datos)
+                        $.each(respuesta.datos, function (key, value) {
+                            opciones_circuitos += '<option value="' + value.id + '">' + value.circuito + '</option>';
+                        })
+                    }
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ':' + errorThrown)
+            }).always(function (respuesta) {
+                //console.log(opciones_sec_en_circuito)
+                select_circuitos.html(opciones_circuitos);
+            })
+        });
+
+
+        //////////////////////////Filtra los locales para mostrar en el mapa al seleccionar el circuito
+        $('select[name="filtro-circuito-para-mapas"]').on('change', function () {
+            id = $(this).val();
+            detail.map.spin(true, {lines: 15, length: 20});
+            $.ajax({
+                url: '{% url 'enviar-locales-por-ajax' %}',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                data: {
+                    'accion': 'todos-los-locales',
+                    'id_cir': id
+                },
+                dataType: 'json',
+            }).done(function (data) {
+                if (!data.hasOwnProperty('error')) {
+                  detail.map.spin(false);
+                   if (data.hay_datos){
+                    //Borro los locales que estaban en el mapa
+                    //https://stackoverflow.com/questions/44884664/leaflet-l-icon-marker-not-removing-on-map-reload
+                    detail.map.eachLayer(function (layer) {
+                        if (layer instanceof L.CircleMarker) {
+                            detail.map.removeLayer(layer);
+                        }
+                    });
+                    //Mustro los resumene al seleccionar el circuito
+                    $('#cant_locales').show()
+                    $('#cant_locales_validados').show()
+                    $('#cant_locales_no_validados').show()
+                    cant_locales = data.cant_loc
+                    cant_locales_validados = data.cant_loc_validados
+                    cant_locales_no_validados = data.cant_loc_no_validados
+                    $('#cant_locales').html('Total: '+cant_locales)
+                    $('#cant_locales_validados').html('Validados: '+cant_locales_validados)
+                    $('#cant_locales_no_validados').html('No validados: '+cant_locales_no_validados)
+                   }
+                   //Recorro los loales que vienen del back-end
+                    let locales_a_centrar = [];
+                    $.each(data.datos, function( clave, valor ) {
+                        let longitud = parseFloat(valor.longitud)
+                        let latitud = parseFloat(valor.latitud)
+                        locales_a_centrar.push([latitud, longitud])
+                        let pepe='{% url "actualizar-local" 0 %}'
+                        //Muestro los validados
+                        if (valor.estado == 'Validado'){
+
+                          L.circleMarker([latitud, longitud],{
+                            radius: 4.0,
+                            fillColor: 'green',
+                            color: '#000000',
+                            weight: 1,
+                            opacity: 1.0,
+                            fillOpacity: 1.0
+                            }).bindPopup('Estado: '+ '<span class="estilo_en_mapa_validados1">'+valor.estado+ '</span>'+ '<br> Distrito: ' + valor.distrito + '<br> Subdistrito: ' + valor.subdistrito + '<br> Seccion: ' + valor.seccion +  '<br> Circuito: ' + valor.circuito + ' <br> Nombre: '+valor.nombre + '<br> Localidad: ' + valor.localidad + '<br> Dirección: ' + valor.direccion + '<br> <a href="'+pepe.replace('0',valor.id)+'">Editar</a>').addTo(detail.map)
+
+                        }
+                        //Muestro los no-validados
+                        else {
+                          L.circleMarker([latitud, longitud],{
+                            radius: 6.0,
+                            fillColor: 'red',
+                            color: '#000000',
+                            weight: 1,
+                            opacity: 1.0,
+                            fillOpacity: 1.0
+                            }).bindPopup('Estado: '+ '<span class="estilo_en_mapa_no_validados">'+valor.estado+ '</span>'+ '<br> Distrito: ' + valor.distrito + '<br> Subdistrito: ' + valor.subdistrito + '<br> Seccion: ' + valor.seccion +  '<br> Circuito: ' + valor.circuito + ' <br> Nombre: '+valor.nombre + '<br> Localidad: ' + valor.localidad + '<br> Dirección: ' + valor.direccion {% if tiene_subdistrito == 'no' %} + '<br> <a href="'+pepe.replace('0',valor.id)+'">Editar</a>' {% endif %}).addTo(detail.map)
+                        }
+                  });
+                  //https://stackoverflow.com/questions/17277686/leaflet-js-center-the-map-on-a-group-of-markers
+                  detail.map.fitBounds(locales_a_centrar)
+                }
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                alert(textStatus + ':' + errorThrown)
+            }).always(function (data) {
+            })
+        });
+
+      //Pagina para configurar geoserarch
+      //https://stackoverflow.com/questions/52588652/how-to-add-leaflet-geosearch-control-in-django-admin
+      const search = new GeoSearch.GeoSearchControl({
+        //provider: new GeoSearch.OpenStreetMapProvider(),
+        provider: new GeoSearch.EsriProvider(),
+        searchLabel: 'Ingrese la dirección...',
+        notFoundMessage: 'No hay resultados',
+        retainZoomLevel: true,
+        showMarker: true,
+        selected: 0,
+        autoClose: true,
+        keepResult: true
+      });
+      detail.map.addControl(search);
+      detail.map.setView([-40,-59],3)
+
+      
+      /*
+      L.tileLayer('https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png', {
+        attribution: '<a href="http://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | <a href="http://www.ign.gob.ar/AreaServicios/Argenmap/IntroduccionV2" target="_blank">Instituto Geográfico Nacional</a> + <a href="http://www.osm.org/copyright" target="_blank">OpenStreetMap</a>',
+        minZoom: 3,
+        maxZoom: 18
+    }).addTo(detail.map);*/
+ 
+    });
+
+</script>
+{% endblock %}

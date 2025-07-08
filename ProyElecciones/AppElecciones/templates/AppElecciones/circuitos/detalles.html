@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block circuitos %} active {% endblock %}
+
+{% load static %}
+{% block titulo %}
+<h4>{{ titulo }} {{object.circuito}}</h4>
+{% endblock %}
+{% block extra_css %}
+<style>
+  .nav-pills .nav-link.active,
+  .show>.nav-pills .nav-link {
+    /*background: #000000 !important*/
+    background: rgb(23, 162, 184);
+  }
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+
+{% endblock %}
+
+{% block contenido %}
+
+
+<!--Seguridad, novedades y detalles de votos-->
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Resumen de seguridad, novedades y locales</legend>
+
+<!--            <a href="{% url 'actualizar-circuito' object.id %}" class="btn btn-info btn-with-icon">-->
+<!--                <div class="ht-40">-->
+<!--                    <span class="icon wd-40"><i class="ion ion-compose" style="font-size:25px"></i></span>-->
+<!--                    <span class="pd-x-5">Editar el circuito</span>-->
+<!--                </div>-->
+<!--            </a>-->
+            <a href="{{ listado_url }}" class="btn btn-success btn-with-icon">
+                <div class="ht-40">
+                    <span class="icon wd-40"><i class="fas fa-sync"></i></span>
+                    <span class="pd-x-5">Actualizar resumen</span>
+                </div>
+            </a>
+            <p></p>
+            <div class="form-row">
+                <div class="form-group col-md-4 mb-0">
+                    <p>Distrito: {{ object.seccion.distrito }}</p>
+                </div>
+                <div class="form-group col-md-4 mb-0">
+                    <p>Subdistrito: {{ object.seccion.subdistrito }}</p>
+                </div>
+                <div class="form-group col-md-4 mb-0">
+                    <p>Sección: {{ object.seccion }}</p>
+                </div>
+            </div>
+             <div class="form-row">
+                <div class="form-group col-md-6 mb-0">
+                    <p>Circuito: {{ object.circuito }}</p>
+                </div>
+
+                <div class="form-group col-md-6 mb-0">
+                    <p>Detalles: {{ object.seccion.detalle }}</p>
+                </div>
+            </div>
+
+
+            <!------Tarjetas-------->
+            <div class="row row-sm mg-b-20">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-info rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <!--<i class="ion ion-earth tx-60 lh-0 tx-white op-7"></i>-->
+                            <i class="icon ion-person-stalker tx-60 lh-0 tx-white-8"></i>
+
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Seguridad interna</p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="seg_interna"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+                </div><!-- col-3 -->
+                <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+                    <div class="bg-purple rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <!--<i class="ion ion-bag tx-60 lh-0 tx-white op-7"></i>-->
+                            <i class="icon ion-person-add tx-60 lh-0 tx-white-8"></i>
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Seguridad externa
+                                </p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="seg_externa"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div><!-- col-3 -->
+                <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0">
+                    <div class="bg-teal rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <!--<i class="ion ion-monitor tx-60 lh-0 tx-white op-7"></i>-->
+                            <i class="ion ion-calendar tx-60 lh-0 tx-white-8"></i>
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Novedades en locales
+                                </p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="cant_novedades"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div><!-- col-3 -->
+                <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0">
+                    <div class="bg-primary rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <!--<i class="ion ion-clock tx-60 lh-0 tx-white op-7"></i>-->
+                            <i class="fas fa-graduation-cap tx-60 lh-0 tx-white op-8"></i>
+
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Cantidad de locales
+                                </p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="cant_locales"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+                </div><!-- col-3 -->
+            </div>
+            <!------Fin de tarjetas-------->
+
+        </fieldset>
+    </div>
+</div>
+
+<!--Listado de locales que le dependen al circuito-->
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Listado de locales</legend>
+            <!--<a href="{% url 'actualizar-local' object.id %}" class="btn btn-info btn-with-icon">
+              <div class="ht-40">
+                <span class="icon wd-40"><i class="ion ion-earth" style="font-size:25px"></i></span>
+                <span class="pd-x-5">Editar</span>
+              </div>
+            </a>-->
+            <br>
+            <table class="table table-bordered" id="tabla-locales-del-circuito" style="width:100%">
+                <thead>
+                <tr>
+                    <th scope="col" style="">Local</th>
+                    <th scope="col" style="">Jefe del local</th>
+                    <th scope="col" style="">Auxiliares</th>
+                    <th scope="col" style="">Seg externa</th>
+                    <th scope="col" style="">mesas</th>
+                    <th scope="col" style="">Novedades <i data-toggle="tooltip" data-placement="top"
+                title="Si tiene fondo de color significa que la novedad no esta subsandada" class="fas fa-info-circle"
+                style="font-size:15px;color:skyblue"></i></th>
+                                <th scope="col" style="">Estado</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot>
+
+                </tfoot>
+            </table>
+            <br>
+    </div>
+    </fieldset>
+</div>
+
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">{% include 'AppElecciones/js_templates/circuitos/locales_del_circuito.js' %}</script>
+{% endblock %}

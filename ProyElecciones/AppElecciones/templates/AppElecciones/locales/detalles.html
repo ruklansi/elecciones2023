@@ -1,0 +1,435 @@
+{% extends 'base.html' %}
+{% block locales %} active {% endblock %}
+{% load guardian_tags %}
+
+{% load widget_tweaks %}
+{% load static %}
+{% block cabecera %}
+{{ form.media }}
+{% load leaflet_tags %}
+{% leaflet_js plugins="buscador"%}
+{% leaflet_css plugins="buscador"%}
+{% endblock %}
+
+{% block titulo %}
+<h4>Información del local: {{object.nombre}}</h4>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .nav-pills .nav-link.active,
+  .show>.nav-pills .nav-link {
+    /*background: #000000 !important*/
+    background: rgb(23, 162, 184);
+  }
+  .estilo_en_mapa_validados{
+    color: rgb(153, 255, 153);;
+    font-size: 1.3125rem;
+  }
+   .mipdf {
+        background-color: burlywood !important;
+    }
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+<link href="{% static 'app/hijos.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block contenido %}
+{% get_obj_perms request.user for object as "permiso" %}
+<!--Seguridad, novedades y detalles de votos-->
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Seguridad interna, externa, novedades y mesas en los locales</legend>
+            <!--El complemento de pestañas también funciona con píldoras--ese usar-combinarlo para centrarlos y demas-->
+            <!--https://getbootstrap.com/docs/4.5/components/navs/#vertical-->
+            <!--<ul class="nav  nav-pills justify-content-center nav-fill mb-3" id="pills-tab" role="tablist">-->
+            <ul class="nav nav-tabs nav-pills nav-fill" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+                       aria-controls="pills-home" aria-selected="true">Seguridad interna</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
+                       aria-controls="pills-profile" aria-selected="false">Seguridad externa</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab"
+                       aria-controls="pills-contact" aria-selected="false">Novedades</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-mesas-tab" data-toggle="pill" href="#pills-mesas" role="tab"
+                       aria-controls="pills-mesas" aria-selected="false">Mesas</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-seg-interna" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th scope="col" style="">Jefe local</th>
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    {% if "change_local" in permiso %}
+                    <div class="btn btn-info btn-with-icon" id='boton-agregar'>
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="mostrar-modal-seg-interna"
+                                    data-url="{% url 'agregar-seguridad-interna'%}" data-toggle="modal"
+                                    data-target="#segexterna">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade pepe" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-seg-externa" style="width:100%">
+                        <thead>
+                        <tr>
+
+                            <th scope="col" style="">Fuerza</th>
+                            <th scope="col" style="">Efectivos</th>
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    {% if "change_local" in permiso %}
+                    <div class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="mostrar-modal-seg-externa"
+                                    data-url="{% url 'agregar-seg-externa'%}" data-toggle="modal"
+                                    data-target="#segexterna">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-novedades-local" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="seleccionarTodasNovedades todos"
+                                       name="seleccionarTodasNovedades"
+                                       value="all" title="Selecciona todas las novedades mostradas">
+                            </th>
+                            <th scope="col" style="">Fecha</th>
+                            <th scope="col" style="">Tipo</th>
+                            <th scope="col" style="">Detalle</th>
+                            <th scope="col" style="">subsanada</th>
+                            <th scope="col" style="">Medidas adoptadas</th>
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    {% if "change_local" in permiso %}
+                    <div class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="mostrar-novedades-local"
+                                    data-url="{% url 'agregar-novedad-local'%}" data-toggle="modal"
+                                    data-target="#segexterna">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade" id="pills-mesas" role="tabpanel" aria-labelledby="pills-mesas-tab">
+                    <br>
+                    <table class="table table-bordered" id="tablamesaslocal" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="">Número de mesa</th>
+<!--                            <th scope="col" style="">Cantidad de electores</th>-->
+                            <th scope="col" style="">Tipo de mesa</th>
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    {% if "change_local" in permiso %}
+                    <div class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="mostrar-modal-mesas"
+                                    data-url="{% url 'agregar-mesas-en-local'%}" data-toggle="modal"
+                                    data-target="#mesa">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+<!--Tarjetas de resumen-->
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Resumen de información</legend>
+
+            <a href="{{ listado_url }}" class="btn btn-success btn-with-icon">
+                <div class="ht-40">
+                    <span class="icon wd-40"><i class="fas fa-sync"></i></span>
+                    <span class="pd-x-5">Actualizar datos</span>
+                </div>
+            </a>
+
+            <p></p>
+            <!-------------->
+            <div class="row row-sm mg-b-20">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-info rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <!--<i class="ion ion-earth tx-60 lh-0 tx-white op-7"></i>-->
+                            <i class="icon ion-person-stalker tx-60 lh-0 tx-white-8"></i>
+
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Seguridad interna
+                                </p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="seg-interna"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+                </div><!-- col-3 -->
+                <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+                    <div class="bg-purple rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <!--<i class="ion ion-bag tx-60 lh-0 tx-white op-7"></i>-->
+                            <i class="icon ion-person-add tx-60 lh-0 tx-white-8"></i>
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Seguridad externa</p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="seg-externa"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div><!-- col-3 -->
+                <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0">
+                    <div class="bg-teal rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <!--<i class="ion ion-monitor tx-60 lh-0 tx-white op-7"></i>-->
+                            <i class="ion ion-calendar tx-60 lh-0 tx-white-8"></i>
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Novedades</p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="cant-novedades"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div><!-- col-3 -->
+                <div class="col-sm-6 col-xl-3 mg-t-20 mg-xl-t-0">
+                    <div class="bg-primary rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <i class="ion ion-clock tx-60 lh-0 tx-white op-7"></i>
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Porcentaje de votos
+                                </p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="porcentaje_votos"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div><!-- col-3 -->
+
+
+            </div>
+            <div class="row row-sm mg-b-20">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="bg-primary rounded overflow-hidden">
+                        <div class="pd-x-20 pd-t-20 d-flex align-items-center">
+                            <i class="fas fa-envelope tx-60 lh-0 tx-white op-7"></i>
+                            <div class="mg-l-20">
+                                <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                    Cantidad de mesas
+                                </p>
+                                <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1" id="cant-mesas"></p>
+                                <span class="tx-11 tx-roboto tx-white-8"></span>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div><!-- col-3 -->
+            </div>
+            <!-------------->
+        </fieldset>
+    </div>
+
+</div>
+<!--Mapa-->
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Datos y ubiación</legend>
+            {% if "change_local" in permiso %}
+            <a href="{% url 'actualizar-local' object.id %}" class="btn btn-info btn-with-icon">
+                <div class="ht-40">
+                    <span class="icon wd-40"><i class="ion ion-earth" style="font-size:25px"></i></span>
+                    <span class="pd-x-5">Editar local</span>
+                </div>
+            </a>
+            {% endif %}
+            <div class="form-row">
+                <div class="form-group col-md-12 mb-0">
+                    {% if object.validado == 1 %}
+                    <p class="estilo_en_mapa_validados text-center">Local validado</p>
+                    {% else %}
+                    <p>No validado</p>
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4 mb-0">
+                    <p>Nombre: {{ object.nombre }}</p>
+                </div>
+                <div class="form-group col-md-4 mb-0">
+                    <p>Localidad: {{ object.localidad }}</p>
+                </div>
+
+                <div class="form-group col-md-4 mb-0">
+                    <p>Dirección: {{ object.direccion }}</p>
+                </div>
+
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3 mb-0">
+                    <p>Distrito: <span class="mostrar">{{ object.circuito.seccion.distrito }}</span></p>
+                </div>
+                <div class="form-group col-md-3 mb-0">
+                    <p>Subdistrito: <span class="mostrar">{{ object.circuito.seccion.subdistrito }}</span></p>
+                </div>
+                <div class="form-group col-md-3 mb-0">
+                    <p>Seccion: <span class="mostrar">{{ object.circuito.seccion }}</span></p>
+                </div>
+                <div class="form-group col-md-3 mb-0">
+                    <p>Circuito: <span class="mostrar">{{ object.circuito }}</span></p>
+                </div>
+            </div>
+
+
+            <div class="form-row">
+                <div class="form-group col-md-6 mb-0">
+                    {% if object.ubicacion.y %}
+                    <p>Latitud: {{ object.ubicacion.y }}</p>
+                    {% else %}
+                    <p>Latitud: Sin dato</p>
+                    {% endif %}
+                </div>
+                <div class="form-group col-md-6 mb-0">
+                    {% if object.ubicacion.x %}
+                    <p>Longitud: {{ object.ubicacion.x }}</p>
+                    {% else %}
+                    <p>Longitud: Sin dato</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12 mb-0">
+                    {% leaflet_map "yourmap" %}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+{% endblock %}
+{% block extrajs %}
+
+<script> {% include 'AppElecciones/js_templates/locales/cargadetalles.js' %}</script>
+<script type="text/javascript">{% include 'AppElecciones/js_templates/locales/mesas/crud-mesas.js' %}</script>
+<script type="text/javascript">
+    {% include 'AppElecciones/js_templates/locales/novedadeslocal/crud-novedadeslocal.js' %}
+</script>
+<script type="text/javascript">{% include 'AppElecciones/js_templates/locales/segexterna/crud-segexterna.js' %}</script>
+<script type="text/javascript">{% include 'AppElecciones/js_templates/locales/seginterna/crud-seginterna.js' %}</script>
+<script type="text/javascript">
+  $(window).on('map:init', function (e) {
+    var detail = e.detail;
+    //Pagina para configurar geoserarch
+    //https://stackoverflow.com/questions/52588652/how-to-add-leaflet-geosearch-control-in-django-admin
+    const search = new GeoSearch.GeoSearchControl({
+      //provider: new GeoSearch.OpenStreetMapProvider(),
+      provider: new GeoSearch.EsriProvider(),
+      searchLabel: 'Ingrese la dirección...',
+      notFoundMessage: 'No hay resultados',
+      retainZoomLevel: true,
+      showMarker: true,
+      selected: 0,
+      autoClose: true,
+      keepResult: true
+    });
+    detail.map.addControl(search);
+    let longitud = parseFloat({{ object.ubicacion.x | safe }})
+  let latitud = parseFloat({{ object.ubicacion.y | safe }})
+
+  detail.map.setView([latitud, longitud], 18);
+  L.marker([latitud, longitud]).addTo(detail.map);
+  });
+
+
+</script>
+
+<!--El modal que se usara para al CRUD de Seg Interna-Anular tabindex='-1' sino no funciona select2-->
+<div class="modal fade" id="modal-seg-interna">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!--El modal que se usara para al CRUD de Seg Externa-->
+<div class="modal fade" id="modal-seg-externa" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!--El modal que se usara para al CRUD de novedades en el local-->
+<div class="modal fade" id="modal-novedad-local" tabindex="-1">
+<div class=" modal-dialog">
+    <div class="modal-content">
+    </div>
+</div>
+</div>
+<!--El modal que se usara para al CRUD de mesas en el local-->
+<div class="modal fade" id="modal-mesas-en-local">
+    <div class=" modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}

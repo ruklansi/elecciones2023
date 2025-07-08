@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<style>
+    @page {
+        size: A4 landscape;
+        margin: 1cm;
+    }
+    .img-invoice {
+        width: 50px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .bomba {
+        background-color: red;
+    }
+
+</style>
+<body>
+<img src="{{ logo }}" class="img-invoice">
+<p class="head">
+    <b>ESTADO MAYOR CONJUNTO DE LAS FUERZAS ARMADAS</b><br>
+    <b>COMANDO OPERACIONAL - TABLERO DE COMANDO - MÓDULO ELECTORAL</b><br>
+<p class="text-center"><b>LISTADO DE TODAS LAS NOVEDADES EN LOCALES DE VOTACIÓN</b>
+</p>
+
+<table id="invoice">
+    <thead>
+    <tr>
+        <th>DISTRITO</th>
+        <th>LOCAL</th>
+        <th>FECHA</th>
+        <th style="width: 20%;">TIPO</th>
+        <th style="width: 25%;">DETALLE</th>
+        <th>SUBSANADA</th>
+        <th style="width: 30%;">MEDIDAS ADOPTADAS</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for d in todas_nov_en_locales %}
+    <tr style="border-top: 1px solid black; padding-top: 4px;">
+        <td class="text-left">{{ d.local.circuito.seccion.distrito.distrito }}</td>
+        <td class="text-left">{{ d.local.nombre }}</td>
+        <td class="text-left">{{ d.fecha | date:'d/m/Y H:i' }}</td>
+        <td class="text-left">{{ d.tipo.tipo }}</td>
+        <td class="text-left">{{ d.detalle }}</td>
+        <td class="text-left">{{ d.subsanada }}</td>
+        <td class="text-left">{{ d.medidas_adoptadas }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</body>
+</html>

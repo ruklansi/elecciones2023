@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+     @page {
+        size: A4 landscape;
+        margin: 1cm;
+    }
+    .img-invoice {
+        width: 50px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .bomba {
+        background-color: red;
+    }
+</style>
+
+<body>
+    <img src="{{ logo }}" class="img-invoice">
+
+    <p class="head">
+        <b>ESTADO MAYOR CONJUNTO DE LAS FUERZAS ARMADAS</b><br>
+        <b>COMANDO OPERACIONAL - TABLERO DE COMANDO - MÓDULO ELECTORAL</b><br>
+        <p class="text-center"><b>RESUMEN DE PERSONAL POR JERARQUÍA Y TIPO</b>
+    </p>
+    <table id="invoice">
+        <thead>
+            <tr>
+                <th style="width: 10%;">JERARQUÍA</th>
+                <th style="width: 10%;">POL PROV</th>
+                <th style="width: 10%;">PSA</th>
+                <th style="width: 10%;">PFA</th>
+                <th style="width: 10%;">PREFECTURA</th>
+                <th style="width: 10%;">GENDARMERÍA</th>
+                <th style="width: 10%;">FAA</th>
+                <th style="width: 10%;">ARA</th>
+                <th style="width: 10%;">EJERCITO</th>
+                <th style="width: 10%;">TOTAL</th>
+                <th style="width: 10%;">PORCENTAJE</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in data %}
+            <tr style="border-top: 1px solid black; padding-top: 4px;">
+                <td class="text-left">{{ d.0 }}</td>
+                <td class="text-center">{{ d.1 }}</td>
+                <td class="text-center">{{ d.2 }}</td>
+                <td class="text-center">{{ d.3 }}</td>
+                <td class="text-center">{{ d.4 }}</td>
+                <td class="text-center">{{ d.5 }}</td>
+                <td class="text-center">{{ d.6 }}</td>
+                <td class="text-center">{{ d.7 }}</td>
+                <td class="text-center">{{ d.8 }}</td>
+                <td class="text-center">{{ d.9 }}</td>
+                <td class="text-center">{{ d.10 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

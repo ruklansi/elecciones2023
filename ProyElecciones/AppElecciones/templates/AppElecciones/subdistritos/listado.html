@@ -1,0 +1,28 @@
+{% extends 'listados.html' %}
+
+{% block subdistritos %} active {% endblock %}
+{% load static %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block filtros %}
+
+{% endblock %}
+
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th scope="col" style="">Subdistrito</th>
+    <th scope="col" style="">Detalle</th>
+    <th scope="col" style="">Distrito</th>
+    <th scope="col" style="width: 20%;">Registro de datos y resumen</th>
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">{% include 'AppElecciones/js_templates/subdistrito/listado_subdistrito.js' %}</script>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block personal %} active {% endblock %}
+{% block personal_validado %} active {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block titulo %}
+    <h4>{{titulo}}</h4>
+{% endblock  %}
+{% block extra_css %}
+<style>
+  .asteriskField {
+    color: red;
+    /*display: none;*/
+  }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block contenido %}
+<div class="container bg-faded">
+    <h6 class="text-center asteriskField">* Campos obligatorios</h6>
+</div>
+<form method="post" novalidate>
+  {% csrf_token %}
+  {{ form.media.js }}
+  {% if form.non_field_errors %}
+  <div class="alert alert-danger" role="alert">
+    {% for error in form.non_field_errors %}
+    <strong><i class='fas fa-info-circle'></i> {{ error }}</strong>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="form-row">
+    <div class="form-group col-md-6 mb-0">
+      <fieldset class="scheduler-border">
+        <legend class="scheduler-border filtros">Datos Profesionales</legend>
+
+        <div class="control-group">
+          {{ form.fuerza|as_crispy_field }}
+        </div>
+        <div class="control-group">
+          {{ form.grado|as_crispy_field }}
+        </div>
+        <div class="control-group">
+          {{ form.tipo_armamento|as_crispy_field }}
+        </div>
+
+
+        <div class="form-row">
+           <div class="form-group col-md-6 mb-0">
+              {{ form.numero_armamento|as_crispy_field }}
+           </div>
+           <div class="form-group col-md-6 mb-0">
+              {{ form.numero_armamento_con_letras|as_crispy_field }}
+           </div>
+        </div>
+
+
+      </fieldset>
+    </div>
+    <div class="form-group col-md-6 mb-0">
+      <fieldset class="scheduler-border">
+        <legend class="scheduler-border filtros">Datos Personales</legend>
+        <div class="control-group">
+          {{ form.nombre|as_crispy_field }}
+        </div>
+        <div class="control-group">
+          {{ form.apellido|as_crispy_field }}
+        </div>
+        <div class="control-group">
+          {{ form.dni|as_crispy_field }}
+        </div>
+        <div class="control-group">
+          {{ form.nro_tel|as_crispy_field }}
+        </div>
+          <div class="control-group">
+          {{ form.validado|as_crispy_field }}
+        </div>
+      </fieldset>
+    </div>
+  </div>
+  <!--{{ form|crispy }}-->
+  <div class="btn btn-info btn-with-icon">
+    <div class="ht-40">
+      <span class="icon wd-40"><i class="fas fa-save"></i></span>
+      <button type="submit" class="btn btn-info btn-flat">
+        Guardar
+      </button>
+    </div>
+  </div>
+  <a id="cancelar" href="" class="btn btn-secondary btn-with-icon">
+    <div class="ht-40">
+      <span class="icon wd-40"><i class="fas fa-times"></i></span>
+      <span class="pd-x-5">Cancelar</span>
+    </div>
+  </a>
+
+</form>
+{% endblock  %}
+{% block extrajs %}
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/personas/funciones_extras_persona.js' %}</script>
+{% endblock %}

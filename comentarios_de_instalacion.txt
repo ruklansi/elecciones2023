@@ -1,0 +1,58 @@
+token olmos para conectar git console servidor para tablero comando-->> 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 (actualizado al 23/5/25)
+pipenv shell
+pipenv install
+pip install GDAL-3.4.3-cp38-cp38-win_amd64.whl
+cd ProyElecciones
+python manage.py makemigrations --name autenticacion1 auth
+python manage.py makemigrations AppAdministracion
+Crear primero la base de datos
+python manage.py migrate
+python manage.py makemigrations AppElecciones
+python manage.py migrate
+
+https://channels.readthedocs.io/en/stable/installation.html
+https://www.youtube.com/watch?v=FcVwDEcu6K0
+Instalacion de channels y daphne:
+1. Instalar: pipenv install install channels["daphne"] channels-redis==3.4.1
+2. Declarar en seeings.py en INSTALLED_APPS: "daphne" al principio de todas y 'channels'
+3. Al iniciar el sistema tira este error: "CommandError: You have not set ASGI_APPLICATION, which is needed to run the server."
+4. Para solucionarlo agregar en settings.py esto: ASGI_APPLICATION = "ProyElecciones.asgi.application"
+5. En asgi.py:
+    agregar: from channels.routing import ProtocolTypeRouter
+
+    luego agregar: pepe_asgi = get_asgi_application()
+                   application = ProtocolTypeRouter({
+                        "http": pape_asgi,
+                   })
+6. https://htmx.org/extensions/web-sockets/
+
+Permisos globales: Permisos asignados al modelo (Por Admin Django o código) y se evalúa con:
+                   from django.contrib.auth.mixins import PermissionRequiredMixin as PermisoDesdeDjango con:
+                   permission_required = 'AppElecciones.view_led'
+                   raise_exception = True
+
+Permisos por objeto opción 1: se debe crear una señal post_save explícitamente que permisos debe tener el objeto
+                              y se evalúa ese permiso en la vista, es este proyecto en el listarParaDatatables
+                              con la función get_objects_for_user() para cada modelo (view, add, edit y delete).
+                              Ejemplo: que en el listado de personas todos accedan pero que cada distrito ve los suyos.
+
+Permisos por objeto opcion 2: se evalúa con: from guardian.mixins import PermissionRequiredMixin as guardianPermiso, con:
+                              permission_required = 'AppElecciones.change_led'
+                              raise_exception = True
+                              accept_global_perms = True -> Evalúa primero los permisos globales y también para el objeto
+                              Genera error una esepción si se accede a un recurso y no tiene los permisos.
+                              Ejemplo  http://127.0.0.1:8000/elecciones23/inicio/todoslosled/actualizar/5
+
+
+Política de permisos implementada en este Proyecto:
+- para los ListView: permisos globales y por objeto opcion 1
+- para los CreateView: permisos globales
+- para los UpdateView: permisos por objeto opcion 2
+- para los DeleteView: permisos por objeto opcion 2
+
+Para gráficos
+bokeh==3.1.0 https://www.geeksforgeeks.org/integrating-bokeh-visualizations-in-django-application/
+django-extensions==3.1.3
+django-htmx==1.6.0
+
+Hola

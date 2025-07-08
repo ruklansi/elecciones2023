@@ -1,0 +1,109 @@
+{% load static %}
+{% load widget_tweaks %}
+<html lang="en">
+<style>
+    .centrar {
+        text-align: center
+    }
+</style>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Meta -->
+    <meta name="description" content="Premium Quality and Responsive UI for Dashboard.">
+    <meta name="author" content="ThemePixels">
+
+    <title>Tablero de Comando del COFFAA - Módulo de Elecciones</title>
+
+    <!-- vendor css -->
+    <link href="{% static 'app/lib/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'app/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+
+
+    <!-- Bracket CSS -->
+    <link href="{% static 'app/css/bracket.css' %}" rel="stylesheet">
+    <!--Sweetalert2-->
+    <link href="{% static 'sweetalert2/dist/sweetalert2.css' %}" rel="stylesheet" />
+</head>
+
+<body>
+
+    <div class="d-flex align-items-center justify-content-center bg-br-primary ht-100v">
+        <div class="login-wrapper wd-400 wd-xs-350 pd-25 pd-xs-40 bg-white rounded shadow-base">
+            <!--https://www.ordinarycoders.com/blog/article/django-messages-framework-->
+            {% for message in messages %}
+            <div id="mensajes" class="container-fluid p-0">
+                <div class="alert {{ message.tags }} alert-success alert-link" role="alert">
+                    {{ message }}
+                </div>
+            </div>
+            {% endfor %}
+            <div class="signin-logo tx-center tx-18 tx-bold tx-inverse"><span class="tx-normal">[</span>Tablero de Comando COFFAA
+                <span class="tx-info"></span> <span class="tx-normal">]</span>
+            </div>
+            <div class="tx-center mg-b-20">Módulo de elecciones</div>
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% for field in form.visible_fields %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+
+                    {% if form.is_bound %}
+                    {% if field.errors %}
+                    {% render_field field class="form-control is-invalid" %}
+                    {% for error in field.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    {% render_field field class="form-control is-valid" %}
+                    {% endif %}
+                    {% else %}
+                    {% render_field field class="form-control" %}
+                    {% endif %}
+
+                    {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <button type="submit" class="btn btn-info btn-block">
+                            Iniciar sesión
+                        </button>
+                    </div>
+                </div>
+                <div class="centrar"><a href="{% url 'reset_password' %}"
+                        class="tx-info tx-12 d-block mg-t-10">Restablecer
+                        contraseña</a>
+                </div>
+                <!--Sobreescribo el boton volver para hacerlo al listado de cada nivel-->
+                {% block boton_volver %}
+                {% endblock %}
+            </form>
+        </div><!-- login-wrapper -->
+    </div><!-- d-flex -->
+    <script src="{% static 'app/lib/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'app/lib/jquery-ui/ui/widgets/datepicker.js' %}"></script>
+    <script src="{% static 'app/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

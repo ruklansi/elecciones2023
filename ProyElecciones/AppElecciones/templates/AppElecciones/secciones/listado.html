@@ -1,0 +1,48 @@
+{% extends 'listados.html' %}
+
+{% block secciones %} active {% endblock %}
+{% load static %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+{% block extra_css %}
+<style>
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% block filtros %}
+<br>
+<fieldset class="scheduler-border" id="field_subdistritos">
+    <legend class="scheduler-border filtros">Filtros</legend>
+     <div class="form-row">
+        <div class="form-group  col-md-4 mb-0" id="dis">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-en-seccion'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0" id="sub">
+            <label class="filtros">Subdistritos:</label>
+            <select id='filtro-subdistrito-en-seccion'></select>
+        </div>
+    </div>
+
+</fieldset>
+<br>
+{% endblock %}
+
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th scope="col" style="">Sección</th>
+    <th scope="col" style="">Subdistrito</th>
+    <th scope="col" style="">Distrito</th>
+    <th scope="col" style="width: 20%;">Registro de datos y resumen</th>
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">{% include 'AppElecciones/js_templates/seccion/listado_seccion.js' %}</script>
+{% endblock %}

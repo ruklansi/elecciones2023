@@ -1,0 +1,48 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "==3.2.9"
+psycopg2 = "*"
+django-simple-captcha = "*"
+django-crum = "*"
+django-utils = "*"
+six = "*"
+django-widget-tweaks = "*"
+django-mptt = "*"
+import-export = "*"
+django-import-export = "*"
+django-guardian = "*"
+django-auditlog = "*"
+django-model-utils = "*"
+django-leaflet = "*"
+django-crispy-forms = "==1.9.2"
+#install = "*"
+xhtml2pdf = "*"
+channels = {extras = ["daphne"], version = "*"}
+unidecode = "*"
+xlsxwriter = "*"
+django-htmx = "==1.6.0"
+django-extensions = "==3.1.3"
+bokeh = "==3.1.0"
+channels-redis = "==3.4.1"
+django-user-sessions = "*"
+django-preventconcurrentlogins = "*"
+whitenoise = "*"
+jupyter = "*"
+ipython = "*"
+python-dotenv = "*"
+django-dotenv = "*"
+django-plotly-dash = "*"
+pandas-datareader = "*"
+notebook = "*"
+dash-bootstrap-components = "*"
+sqlalchemy = "*"
+geopandas = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

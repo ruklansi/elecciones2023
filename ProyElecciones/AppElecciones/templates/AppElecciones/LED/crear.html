@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% block locales %} active {% endblock %}
+{% block led %} active {% endblock %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block cabecera %}
+{% load leaflet_tags %}
+{% leaflet_js plugins="forms, buscador"%}
+{% leaflet_css plugins="forms, buscador"%}
+{{ form.media }}
+{% endblock %}
+
+{% block titulo %}
+<h4>{{titulo}}</h4>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .asteriskField {
+        color: red;
+        /*display: none;*/
+    }
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% block contenido %}
+<div class="container bg-faded">
+    <h6 class="text-center asteriskField">* Campos obligatorios</h6>
+</div>
+<form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+        {% for error in form.non_field_errors %}
+        {{ error }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="form-row">
+        <div class="form-group col-md-12 mb-0">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border filtros">Datos de los LED</legend>
+                <div class="form-row">
+                    <div class="form-group  col-md-4 mb-0">
+                        {{ form.tipo|as_crispy_field }}
+                    </div>
+                    <div class="form-group  col-md-4 mb-0">
+                        {{ form.direccion|as_crispy_field }}
+                    </div>
+                     <div class="form-group  col-md-4 mb-0">
+                        {{ form.obs|as_crispy_field }}
+                    </div>
+                </div>
+                <!--Búsqueda por coordenadas-->
+                <div class="form-row">
+                    <div class="form-group col-md-3 mb-0">
+                        <b>Búsqueda por coordenadas</b>
+                    </div>
+                    <div class="form-group col-md-3 mb-0">
+                        <b>Latitud: </b><input type="text" name="lat" id="lat" size=12 value="">
+                    </div>
+                    <div class="form-group col-md-3 mb-0">
+                        <b>Longitud: </b><input type="text" name="lon" id="lon" size=12 value="">
+                    </div>
+                    <div class="form-group col-md-3 mb-0">
+                        <button id="boton_buscar_por_coordenadas" type="button">Buscar</button>
+                        <button id="boton_resetear" type="button">Resetear búsqueda</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group  col-md-12 mb-0">
+                        {{ form.ubicacion|as_crispy_field }}
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="btn btn-info btn-with-icon">
+            <div class="ht-40">
+                <span class="icon wd-40"><i class="fas fa-save"></i></span>
+                <button type="submit" class="btn btn-info btn-flat">
+                    Guardar
+                </button>
+            </div>
+        </div>
+        <a id="" href="{% url 'listado-de-led' %}" class="btn btn-secondary btn-with-icon">
+            <div class="ht-40">
+                <span class="icon wd-40"><i class="fas fa-times"></i></span>
+                <span class="pd-x-5">Cancelar</span>
+            </div>
+        </a>
+    </div>
+</form>
+{% endblock %}
+{% block extrajs %}
+<script type="application/javascript">
+    $(window).on('map:init', function (e) {
+      var marcadores = L.layerGroup();
+      var nuevomarker = {
+          icon: new L.icon({
+              iconUrl: '{% static "coffaa/pngwing.com.png" %}',
+              //shadowUrl: 'leaf-shadow.png',
+              iconSize: [20, 20], // size of the icon
+              shadowSize: [50, 64], // size of the shadow
+              //iconAnchor:   [15, 30], // point of the icon which will correspond to marker's location
+              shadowAnchor: [4, 20],  // the same for the shadow
+              // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+          }),
+          draggable: false
+      }
+
+      var detail = e.detail;
+      var map = detail.map
+      var marker = null;
+      var mira = null;
+<!--      var lat = -39.5955824;-->
+<!--      var lon = -58.4955451;-->
+<!--      var longitud = parseFloat(lon)-->
+<!--      var latitud = parseFloat(lat)-->
+<!--      map.setView([latitud, longitud], 3);-->
+
+      $('#boton_buscar_por_coordenadas').on('click', function () {
+          var lat = $('#lat').val();
+          var lon = $('#lon').val();
+          var longitud = parseFloat(lon)
+          var latitud = parseFloat(lat)
+          var NuevoIcon = L.Icon.extend({
+              options: {
+                iconSize:     [20, 20],
+                shadowSize:   [50, 64],
+                //iconAnchor:   [22, 94],
+                shadowAnchor: [4, 20],
+                //popupAnchor:  [-3, -76]
+              }
+      });
+      var greenIcon = new NuevoIcon({
+          iconUrl: '{% static "coffaa/pngwing.com.png" %}',
+          //shadowUrl: 'http://leafletjs.com/examples/custom-icons/leaf-shadow.png'
+      });
+      var zoom = 18
+      marker = L.marker([latitud, longitud], { icon: greenIcon });
+      marcadores.addLayer(marker).addTo(map)
+      map.setView([latitud, longitud], zoom);
+
+    });
+
+      $('#boton_resetear').on('click', function () {
+        var lat = -39.5955824;
+        var lon = -58.4955451;
+        var longitud = parseFloat(lon)
+        var latitud = parseFloat(lat)
+        map.setView([latitud, longitud], 3);
+        $('input[name="lat"]').val('');
+        $('input[name="lon"]').val('');
+        marcadores.clearLayers()
+
+      });
+
+      //Pagina para configurar geoserarch
+        //https://stackoverflow.com/questions/52588652/how-to-add-leaflet-geosearch-control-in-django-admin
+      const search = new GeoSearch.GeoSearchControl({
+          provider: new GeoSearch.OpenStreetMapProvider(),
+          //provider: new GeoSearch.EsriProvider(),
+          searchLabel: 'Ingrese la dirección...',
+          notFoundMessage: 'No hay resultados',
+          //maxMarkers: 1, //retainZoomLevel: true,
+          showMarker: false,
+          //marker: nuevomarker,
+          autoClose: true,
+          keepResult: true,
+          updateMap: true,
+          showPopup: false //muestre la direccion sobre el marker
+      });
+      map.addControl(search);
+      map.on('geosearch/showlocation', function(resultado){
+        mira = L.marker([resultado.location.y, resultado.location.x], {icon: new L.icon({
+              iconUrl: '{% static "coffaa/pngwing.com.png" %}',
+              //shadowUrl: 'leaf-shadow.png',
+
+              iconSize: [20, 20], // size of the icon
+              shadowSize: [50, 64], // size of the shadow
+              //iconAnchor:   [15, 30], // point of the icon which will correspond to marker's location
+              shadowAnchor: [4, 20],  // the same for the shadow
+              // popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+          }),})
+          marcadores.addLayer(mira).addTo(map)
+      })
+  });
+
+
+
+</script>
+<script type="text/javascript">
+  $(function () {
+    $('#tipo_led').select2({
+      theme: "bootstrap4",
+      language: 'es',
+      placeholder: 'Seleccione',
+      allowClear: true,
+   });
+});
+</script>
+{% endblock %}
+

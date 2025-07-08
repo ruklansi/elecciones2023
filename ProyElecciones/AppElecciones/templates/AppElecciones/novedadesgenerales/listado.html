@@ -1,0 +1,72 @@
+{% extends 'listados.html' %}
+{% block novedades %} active {% endblock %}
+
+{% load static %}
+{% block titulo %}
+<h4>{{ titulo }}
+</h4>
+{% endblock %}
+{% block extra_css %}
+
+<style>
+    .mipdf {
+        background-color: burlywood !important;
+    }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+
+{% endblock %}
+{% block filtros %}
+
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+        <div class="form-group  col-md-4 mb-0" id="dis">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-nov-generales'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Subsanada:</label>
+            <select id='filtro-subsanada-nov-generales'>
+                <option value="">Todas</option>';
+                <option value="Si">Subsanadas</option>';
+                <option value="No">No subsanadas</option>';
+            </select>
+        </div>
+    <div class="form-group  col-md-4 mb-0">
+        <label class="filtros">Tipo:</label>
+        <select id='filtro-tipo-nov-generales'></select>
+    </div>
+</fieldset>
+<br>
+
+{% endblock %}
+{% block cabecera_de_la_tabla %}
+
+<tr>
+    <th><input type="checkbox" title="Selecciona todos las novedades mostradas" class="seleccionarTodasNovedades todos" name="seleccionarTodasNovedades" value="all"></th>
+    <th scope="col" style="">Distrito</th>
+    <th scope="col" style="">Fecha</th>
+    <th scope="col" style="">Tipo</th>
+    <th scope="col" style="">Detalle</th>
+    <th scope="col" style="">Subsanada</th>
+    <th scope="col" style="">Medidas adoptadas</th>
+    <th scope="col" style="">Acciones</th>
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% if perms.AppElecciones.add_novedadesgenerales %}
+<a href="{{ crear_url }}" class="btn btn-primary btn-with-icon">
+    <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+        <span class="pd-x-5">Agregar</span>
+    </div>
+</a>
+{% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">{% include 'AppElecciones/js_templates/novedadesgenerales/listadotodaslasnovedades.js' %}</script>
+{% endblock %}

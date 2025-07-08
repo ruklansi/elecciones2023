@@ -1,0 +1,58 @@
+{% extends 'listados.html' %}
+
+{% block administracion %} active {% endblock %}
+{% block auditoria %} active {% endblock %}
+
+{% load static %}
+
+{% block extra_css %}{% endblock %}
+
+{% block titulo %}
+    <h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block resumenes %}{% endblock %}
+{% block filtros %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="form-group">
+            <label>Hacer click sobre el rango de fechas de abajo para buscar. Sobre el almanaque hacer click sobre un día y luego sobre el último y luego Aplicar. Al cancelar en el almanaque se recargan los datos de hoy. Fuera del almanaque haga click sobre el botón "Ver datos de hoy. En la table se pueden ordenar los registros solo por fecha."</label>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-2">
+        <div class="form-group">
+            {{rango.rango_fechas}}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+          <a href="{% url 'listado-de-auditorias' %}" class="btn btn-primary btn-with-icon">
+        <div class="ht-40"><span class="pd-x-5">Ver datos de hoy</span>
+        </div>
+        </a>
+    </div>
+</div>
+<p></p>
+
+{% endblock %}
+{% block cabecera_de_la_tabla %}
+    <tr>
+        <th scope="col" style="">Fecha</th>
+        <th scope="col" style="">Usuario</th>
+        <th scope="col" style="">Acción del usuario</th>
+        <th scope="col" style="">Registro</th>
+        <th scope="col" style="">modelo</th>
+    </tr>
+{% endblock %}
+
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+
+{% endblock %}
+
+{% block extrajs %}
+    <script type="application/javascript">{% include 'AppAdministracion/js_templates/listado-auditoria.js' %}</script>
+{% endblock %}

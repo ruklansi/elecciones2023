@@ -1,0 +1,66 @@
+{% extends 'listados.html' %}
+{% block locales %} active {% endblock %}
+{% block todas_las_novedades_locales %} active {% endblock %}
+{% load static %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+     .mipdf {
+        background-color: burlywood !important;
+    }
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block filtros %}
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+        <div class="form-group  col-md-4 mb-0" id="dis">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-novedad-local'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Subsanada:</label>
+            <select id='filtro-subsanada-nov-local'>
+                <option value="">Todas</option>
+                ';
+                <option value="Si">Subsanadas</option>
+                ';
+                <option value="No">No subsanadas</option>
+                ';
+            </select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Tipo:</label>
+            <select id='filtro-tipo-nov-local'></select>
+        </div>
+</fieldset>
+<br>
+{% endblock %}
+
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th scope="col" style="">Distrito</th>
+    <th scope="col" style="">Local</th>
+    <th scope="col" style="">Fecha</th>
+    <th scope="col" style="">Tipo</th>
+    <th scope="col" style="">Detalle</th>
+    <th scope="col" style="">Subsanada</th>
+    <th scope="col" style="">Medidas adoptadas</th>
+</tr>
+{% endblock %}
+
+{% block lista_de_bonotones %}
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    {% include 'AppElecciones/js_templates/locales/listado_todas_las_novedades_en_locales.js' %}
+</script>
+{% endblock %}

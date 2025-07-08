@@ -1,0 +1,92 @@
+{% extends 'listados.html' %}
+{% block locales %} active {% endblock %}
+{% block locales_controlmesas %} active {% endblock %}
+
+
+{% load static %}
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .estilo_del_boton_ejecutar {
+        background-color: #17A2B8 !important;
+        color: white !important;
+    }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block filtros %}
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+        <div class="form-group  col-md-4 mb-0" id="dis">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-controlmesas'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0" id="sub">
+            <label class="filtros">Subdistritos:</label>
+            <select id='filtro-subdistrito-controlmesas'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Sección:</label>
+            <select id='filtro-seccion-controlmesas'></select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Circuito:</label>
+            <select id='filtro-circuito-controlmesas'></select>
+        </div>
+         <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Locales:</label>
+            <select id='filtro-locales-controlmesas'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Tipo de mesas:</label>
+            <select id='filtro-por-mesas'>
+                <option value="">Todas</option>
+                <option value='0'>Nacionales</option>
+                <option value='1'>Extranjeras</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-row">
+    <div class="form-group  col-md-12 mb-0">
+        <label class="filtros">Estados:</label>
+        <select id='filtro-por-estado-mesas'>
+        </select>
+    </div>
+</div>
+</fieldset>
+<div class="form-row col" id='accion'>
+    <div class="form-group  col-md-12 mb-0">
+        <label class="filtros">Causa:</label>
+        <select id='filtro-tipo-causa-no-iniciada'></select>
+    </div>
+</div>
+<br>
+
+{% endblock %}
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th><input type="checkbox" title="Selecciona todas las mesas mostradas" class="seleccionarTodasLasMesas" name="seleccionarTodasLasMesas" value="all"></th>
+    <th scope="col" style="">Número de mesa</th>
+    <th scope="col" style="">Local</th>
+    <th scope="col" style="">distrito</th>
+    <th scope="col" style="">subdistrito</th>
+    <th scope="col" style="">Seccion</th>
+    <th scope="col" style="">Circuito</th>
+    <th scope="col" style="">Estado</th>
+    <th scope="col" style="">Causa</th>
+
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% endblock %}
+{% block extrajs %}
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/mesas/controlinicio.js' %}</script>
+{% endblock %}

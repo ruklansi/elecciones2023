@@ -1,0 +1,29 @@
+En la AppAdministración
+
+    Ver de instrumentar control de auditoria de usuarios, ver que quieren
+
+En la organización
+
+En locales
+
+En novedades generales
+
+Permisos
+
+En general
+
+    Recorrer todos los títulos al pasar el mause y en el menu de la izquierda debe decir "Listado de ....."
+
+    Normalizar que todos los iconos de la columna Acciones esten en el mismo orden y tengan el mismo color
+
+    Agregar que sea unica la patente de los vehículos propios - ver bien esto!!!!!!!!!
+
+En vehículos
+
+    Agregar un crud nuevo de troncales: campos: tipo, patente,troncal o designacion(alfanumerico), cant urnas,
+    posee spots(o sensor de rastreo), principal o secuntaria. Agregar también a listados x excel. Ver bien esto !!!!!
+
+    En los listados ver como listar con las tareas
+
+django-preventcurrentlogins
+tabnine

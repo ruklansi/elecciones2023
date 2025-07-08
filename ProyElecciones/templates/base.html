@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+{% load static %}
+{% load funciones_extras %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Tablerdo de Comando COFFAA - Módulo Elecciones</title>
+    <link rel="shortcut icon" href="{%  static 'sigemco.ico' %}">
+    <script src="{% static 'app/lib/jquery/jquery.min.js' %}"></script>
+    <!-- vendor css -->
+    <link href="{% static 'app/lib/@fortawesome/fontawesome-free/css/all.min.css' %}" rel="stylesheet">
+    <link href="{% static 'app/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+    <!--Datatables-->
+    <link href="{% static 'app/lib/datatables.net-dt/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'app/lib/datatables.net-responsive-dt/css/responsive.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'app/lib/datatables.net-dt/select/select.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'app/lib/datatables.net-dt/fijarcolumna/fixedColumns.dataTables.min.css' %}" rel="stylesheet">
+    <!--Botones para Datatables-->
+    <link href="{% static 'app/lib/datatables.net-dt/select/buttons.dataTables.min.css' %}" rel="stylesheet">
+    <!-- Bracket CSS -->
+    <link href="{% static 'app/css/bracket.css' %}" rel="stylesheet">
+    <!-- <link href="{% static 'app/css/bracket.simple-white.css' %}" rel="stylesheet"> -->
+    <link href="{% static 'app/css/bracket.dark.css' %}" rel="stylesheet">
+    <!-- <link href="{% static 'app/css/bracket.oreo.css' %}" rel="stylesheet"> -->
+    <!--Select2 CSS-->
+    <link href="{% static 'app/lib/select2/css/select2.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'app/lib/select2/css/select2-bootstrap4.min.css' %}" rel="stylesheet"/>
+    <!--Sweetalert2-->
+    <link href="{% static 'sweetalert2/dist/sweetalert2.css' %}" rel="stylesheet"/>
+    <!--<link href="{% static 'sweetalert2/theme-dark/dark.css' %}" rel="stylesheet" />-->
+    <!--daterangepicker-->
+    <link href="{% static 'app/daterangepicker/daterangepicker.css' %}" rel="stylesheet"/>
+    <link href="{% static 'app/alertifyjs/build/css/alertify.css' %}" rel="stylesheet"/>
+    <!--Estilos propios-->
+    <!--    Copiarlos en cada html, no aca-->
+    <!--Touchspin-->
+    <link href="{% static 'app/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet"/>
+    {% block extra_css %} {% endblock %}
+    {% block cabecera %} {% endblock %}
+</head>
+<!--<body hx-ext="ws" ws-connect="/ws/novedades/">-->
+<body>
+<!-- ########## START: LEFT PANEL ########## -->
+
+<div title="Tablero de Comando COFFA - Módulo de elecciones" class="br-logo"><a href=""><span>[</span>Menú<span>]</span></a>
+
+</div>
+<div class="br-sideleft sideleft-scrollbar">
+<!--    <label class="sidebar-label pd-x-10 mg-t-20 op-3">Navegación</label>-->
+<!--        (1, 'adminsistema'),-->
+<!--        (2, 'cge'),-->
+<!--        (3, 'distrito'),-->
+<!--        (4, 'subdistrito'),-->
+<!--        (5, 'seccion'),-->
+<!--        (6, 'circuito'),-->
+<!--        (7, 'personal'),-->
+<!--        (8, 'logistica'),-->
+<!--        (9, 'personal-CGE'),-->
+<!--        (10, 'material-CGE'),-->
+<!--        (100, 'sin rol'),-->
+    <ul class="br-sideleft-menu">
+        {% if request.user.is_superuser %}
+          <li class="br-menu-item">
+            <a href="/elecciones/nido" class="br-menu-link "
+               title="Administración de Django">
+                <i class="fas fa-solid fa-screwdriver-wrench fa-lg tx-20"></i>
+                <span class="menu-item-label">Admin django</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if request.user.is_superuser or request.user.rol == 1 %}
+            <li class="br-menu-item">
+            <a href="#" class="br-menu-link with-sub '{% block administracion %} {% endblock %}'"
+               title="Administración del Tablero de Comando">
+                <i class="fas fa-chalkboard-teacher fa-lg tx-20"></i>
+                <span class="menu-item-label">Administración</span>
+            </a>
+            <ul class="br-menu-sub">
+                <li class="sub-item"><a href="{% url 'listado-de-usuarios' %}"
+                                        class="sub-link '{% block usuarios %} {% endblock %}'">Usuarios</a></li>
+                <li class="sub-item"><a href="{% url 'listado-de-auditorias' %}"
+                                        class="sub-link '{% block auditoria %} {% endblock %}'">Auditoría</a></li>
+<!--                                 <li class="sub-item"><a href="{% url 'listado-de-novedades-tiempo-real' %}" class="sub-link '{% block novtiemporeal %} {% endblock %}'">Nov tiempo real</a></li>-->
+<!--                                 <li class="sub-item"><a href="{% url 'listado-de-user-tiempo-real' %}" class="sub-link '{% block usertiemporeal %} {% endblock %}'">Usuarios tiempo real</a></li>-->
+
+            </ul>
+        </li>
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 9 %}
+            <li class="br-menu-item">
+            <a href="{% url 'listado-lugar-interes' %}" class="br-menu-link '{% block lugares %} {% endblock %}'"
+               title="Lugares de interés: Puesto Cdo DE, Reserva y Jueces Electorales">
+                <i class="fas fa-place-of-worship fa-lg tx-20"></i>
+                <span class="menu-item-label">Instituciones</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 9 or request.user.rol == 10 %}
+            <li class="br-menu-item">
+            <a href="{% url 'detalles-cdogrlelect' 1 %}" class="br-menu-link '{% block cge %} {% endblock %}'"
+               title="Comando General Electoral">
+                <i class="fas fa-sitemap fa-lg tx-20"></i>
+                <span class="menu-item-label">CGE</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3 %}
+            <li class="br-menu-item">
+            <a href="{% url 'listado-de-distritos' %}" class="br-menu-link '{% block distritos %} {% endblock %}'"
+               title="Distritos electorales">
+                <i class="fas fa-city fa-lg tx-20"></i>
+                <span class="menu-item-label">Distritos</span>
+            </a>
+        </li>
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4  %}
+            {% if request.user|tiene_subdistrito or request.user.rol == 4 or request.user.rol == 2 %}
+            <li class="br-menu-item">
+                <a href="{% url 'listado-de-subdistritos' %}" class="br-menu-link '{% block subdistritos %} {% endblock %}'"
+                   title="Subdistritos electorales">
+                    <i class="fas fa-building fa-lg tx-20"></i>
+                    <span class="menu-item-label">Subdistritos</span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="br-menu-item">
+                <a href="{% url 'listado-de-secciones' %}" class="br-menu-link '{% block secciones %} {% endblock %}'"
+                   title="Secciones electorales">
+                    <i class="menu fas fa-th fa-lg tx-20"></i>
+                    <span class="menu-item-label">Secciones</span>
+                </a>
+            </li>
+            <li class="br-menu-item">
+                <a href="{% url 'listado-de-circuitos-filtrados' %}"
+                   class="br-menu-link {% block circuitos %} {% endblock %}'" title="Circuitos electorales">
+                    <i class="fas fa-grip-vertical fa-lg tx-20"></i>
+                    <span class="menu-item-label">Circuitos</span>
+                </a>
+            </li>
+            <li class="br-menu-item">
+                <a href="#" class="br-menu-link with-sub {% block locales %} {% endblock %}"
+                   title="Locales destinados para el comicio">
+                    <i class="menu fas fa-solid fa-school fa-lg tx-20"></i>
+                    <span class="menu-item-label">Locales</span>
+                </a>
+
+                <ul class="br-menu-sub">
+                    <li class="sub-item"><a href="{% url 'listado-de-locales-validados' %}"
+                                            class="sub-link {% block locales_validados %} {% endblock %}">Validados</a>
+                    </li>
+                    {% if request.user.rol == 3 or request.user.rol == 4 %}
+                    <li class="sub-item"><a href="{% url 'listado-de-locales-novalidados' %}"
+                                            class="sub-link {% block locales_sinvalidar %} {% endblock %}">Sin validar</a>
+                    </li>
+                    {% endif %}
+                     {% if request.user.rol == 3 or request.user.rol == 4  %}
+                    <li class="sub-item"><a href="{% url 'listado-de-locales-enmapa' %}"
+                                            class="sub-link {% block locales_enmapa %} {% endblock %}">Validar desde el
+                        mapa</a>
+                    </li>
+                    {% endif %}
+                    <li class="sub-item"><a href="{% url 'listado-de-mesas-en-local-para-iniciar' %}"
+                                            class="sub-link {% block locales_controlmesas %} {% endblock %}">Control de
+                        mesas</a>
+                    </li>
+                    <li class="sub-item"><a href="{% url 'listado-de-locales-urnas' %}"
+                                            class="sub-link {% block locales_controlurnas %} {% endblock %}">Control de
+                        urnas</a>
+                    </li>
+                    {% if request.user.rol == 2 or request.user.rol == 3  %}
+                    <li class="sub-item"><a href="{% url 'listado-de-sed' %}"
+                                            class="sub-link {% block sed %} {% endblock %}">Sucursal Electoral Digital</a>
+                    </li>
+                    {% endif %}
+                    <li class="sub-item"><a href="{% url 'listado-de-todas-novedades-en-locales' %}"
+                                            class="sub-link {% block todas_las_novedades_locales %} {% endblock %}">Novedades</a>
+                    </li>
+                </ul>
+
+            </li>
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 9 or request.user.rol == 10 %}
+            <li class="br-menu-item">
+                <a href="#" class="br-menu-link with-sub {% block personal %} {% endblock %}" title="Personal">
+                    <i class="fas fa-users fa-lg tx-20"></i>
+                    <span class="menu-item-label">Personal</span>
+                </a>
+                <ul class="br-menu-sub">
+                    <li class="sub-item "><a href="{% url 'listado-de-personas' %}"
+                                             class="sub-link {% block personal_validado %} {% endblock %}">Validado</a>
+                    </li>
+                   {% if request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 9 %}
+                    <li class="sub-item"><a href="{% url 'listado-de-personal-no-validado' %}"
+                                            class="sub-link {% block personal_novalidado %} {% endblock %}">Sin validar</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </li>
+         {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 10 %}
+            <li class="br-menu-item">
+                <a href="#" class="br-menu-link with-sub {% block vehiculos %} {% endblock %}"
+                   title="Vehículos provistos y contratados">
+                    <i class="fas fa-bus fa-lg tx-20"></i>
+                    <span class="menu-item-label">Vehículos</span>
+                </a>
+                <ul class="br-menu-sub">
+                    <li class="sub-item "><a href="{% url 'listado-de-vehiculos-propios' %}"
+                                             class="sub-link {% block vehiculos_propios %} {% endblock %}">Provistos</a>
+                    </li>
+                    <li class="sub-item"><a href="{% url 'listado-vehiculos-contratados' %}"
+                                            class="sub-link {% block vehiculos_contratados %} {% endblock %}">Contratados</a>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 %}
+            <li class="br-menu-item">
+                <a href="{% url 'listado-de-novedades-generales' %}"
+                   class="br-menu-link {% block novedades %} {% endblock %}"
+                   title="Novedades generales fuera del Local de Votación">
+                    <i class="menu fas fa-clipboard fa-lg tx-20"></i><i class=""></i>
+                    <span class="menu-item-label">Novedades</span>
+                </a>
+            </li>
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3  %}
+            <li class="br-menu-item">
+                <a href="{% url 'listado-de-movimientos' %}" class="br-menu-link {% block movimientos %} {% endblock %}"
+                   title="Movimientos de personal y medios">
+                    <i class="menu fas fa-truck fa-lg tx-20"></i><i class=""></i>
+                    <span class="menu-item-label">Movimientos</span>
+                </a>
+            </li>
+        {% endif %}
+          {% if request.user.rol == 2 or request.user.rol == 3  %}
+            <li class="br-menu-item">
+                <a href="{% url 'listado-de-led' %}" class="br-menu-link {% block led %} {% endblock %}"
+                   title="Lugar de Escrutinio Definitivo y otros locales destinados al almacenamiento de urnas">
+                    <i class="menu fas fa-warehouse fa-lg tx-20"></i><i class=""></i>
+                    <span class="menu-item-label">LED</span>
+                </a>
+            </li>
+          {% endif %}
+          {% if request.user.rol == 1 or request.user.rol == 2 %}
+             <li class="br-menu-item">
+                    <a href="#" class="br-menu-link with-sub {% block sacas %} {% endblock %}" title="Control de urnas de Unidades de Penitenciarias">
+
+                        <i class="fas fa-shopping-bag fa-lg tx-20"></i>
+                        <span class="menu-item-label">SACAS</span>
+                    </a>
+                    <ul class="br-menu-sub">
+                        <li class="sub-item"><a href="{% url 'listado-puntos-recoleccion-sacas' %}" class="sub-link {% block puntos %} {% endblock %}">Puntos de reunión</a>
+                        </li>
+                        <li class="sub-item"><a href="{% url 'listado-circuitos-recoleccion-sacas' %}" class="sub-link {% block circuito %} {% endblock %}">Circuitos de recolección</a></li>
+                    </ul>
+                </li>
+
+        {% endif %}
+         {% if request.user.rol == 1 or request.user.rol == 2 or request.user.rol == 3 %}
+             <li class="br-menu-item">
+                    <a href="#" class="br-menu-link with-sub {% block tableros %} {% endblock %}" title="Tableros de control">
+                        <i class="fas fa-solid fa-chart-simple fa-lg tx-20"></i>
+                        <span class="menu-item-label">Tableros</span>
+                    </a>
+                    <ul class="br-menu-sub">
+                        <li class="sub-item"><a href="{% url 'tablero_resumn_general' %}" class="sub-link {% block tab_res_grl %} {% endblock %}">Res General</a></li>
+                        <li class="sub-item"><a href="{% url 'distribucion_personal' %}" class="sub-link {% block tab_pers %} {% endblock %}">Dist Personal</a></li>
+                        <li class="sub-item"><a href="{% url 'tablero_vehiculos' %}" class="sub-link {% block tab_veh %} {% endblock %}">Vehículos</a></li>
+                         <li class="sub-item"><a href="{% url 'tablero_locales' %}" class="sub-link {% block tab_loc %} {% endblock %}">Locales</a></li>
+                         <li class="sub-item"><a href="{% url 'tablero_despliegue_pc' %}" class="sub-link {% block tab_des_pc %} {% endblock %}">Des PC</a></li>
+                       <li class="sub-item"><a href="{% url 'tablero_novedades' %}" class="sub-link {% block tab_novedades %} {% endblock %}">Novedades</a></li> 
+                       <li class="sub-item"><a href="{% url 'tablero_despliegue' %}" class="sub-link {% block tab_des %} {% endblock %}">Despliegue</a></li>
+                       <li class="sub-item"><a href="{% url 'tablero_res_mat_elec' %}" class="sub-link {% block tab_rece_mat %} {% endblock %}">Res Mat Elec</a></li>
+                        <li class="sub-item"><a href="{% url 'tablero_repliegue' %}" class="sub-link {% block tab_rep %} {% endblock %}">Repliegue</a></li>
+                       <li class="sub-item"><a href="{% url 'tablero_repliegue_pc' %}" class="sub-link {% block tab_rep_pc %} {% endblock %}">Rep PC</a></li>
+                       <li class="sub-item"><a href="{% url 'tablero_tele' %}" class="sub-link {% block tab_tele %} {% endblock %}">Telegramas</a></li>
+                       <li class="sub-item"><a href="{% url 'tablero_led' %}" class="sub-link {% block tab_led %} {% endblock %}">LED(s)</a></li>
+                    </ul>
+                </li>
+
+        {% endif %}
+        {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 9 or request.user.rol == 10 %}
+            <li class="br-menu-item">
+            <a href="{% url 'reportes' %}" class="br-menu-link {% block listados %} {% endblock %}"
+               title="Listados en Excel y reportes en PDF">
+                <i class="menu fas ffa-solid fa-table-list"></i><i class=""></i>
+                <span class="menu-item-label">Listados y reportes</span>
+            </a>
+        </li>
+        {% endif %}
+    </ul>
+</div><!-- br-sideleft -->
+<div class=" br-header">
+    <div class="br-header-left">
+        <div class="navicon-left hidden-md-down">
+            <a id="btnLeftMenu" href=""><i class="icon ion-navicon-round"></i></a>
+        </div>
+        <div class="navicon-left hidden-lg-up">
+            <a id="btnLeftMenuMobile" href=""><i class="icon ion-navicon-round"></i>
+            </a>
+        </div>
+    </div><!-- br-header-left -->
+    <div class="br-header-right">
+        <nav class="nav">
+            <div id="pepe" class="dropdown">
+            </div>
+            <div class="dropdown">
+                <a href="" class="nav-link nav-link-profile" data-toggle="dropdown" aria-expanded="false">
+                    <span class="logged-name hidden-md-down">{{ request.user.get_full_name }} -> {{ request.user|rol }}</span>
+                    <i class="fas fa-user-alt tx-20"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-header wd-250" x-placement="bottom-start"
+                     style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-65px, 48px, 0px);">
+                    <ul class="list-unstyled user-profile-nav">
+                        <li><a href=""><i class="icon ion-android-calendar"></i>Ingresó:
+                            {{request.user.last_login|date:'d/m/Y'}}</a></li>
+                        <li><a href="{% url 'change_password' %}"><i class="icon ion-ios-gear"></i> Cambiar
+                            contraseña</a></li>
+                        {% if request.user.rol == 2 %}
+                            <li><a href="{% url 'manual-lector-cge' %}" target="_blank"><i class="icon ion-ios-download"></i>Manual del usuario</a></li>
+                        {% endif %}
+                        {% if request.user.rol == 9 %}
+                            <li><a href="{% url 'manual-personal-cge' %}" target="_blank"><i class="icon ion-ios-download"></i>Manual del usuario</a></li>
+                        {% endif %}
+                        {% if request.user.rol == 10 %}
+                            <li><a href="{% url 'manual-logistica-cge' %}" target="_blank"><i class="icon ion-ios-download"></i>Manual del usuario</a></li>
+                        {% endif %}
+                        {% if request.user.rol == 3 %}
+                            <li><a href="{% url 'manual-distrito' %}" target="_blank"><i class="icon ion-ios-download"></i>Manual del usuario</a></li>
+                        {% endif %}
+                        {% if request.user.rol == 4 %}
+                            <li><a href="{% url 'manual-subdistrito' %}" target="_blank"><i class="icon ion-ios-download"></i>Manual del usuario</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'manual-tableros' %}" target="_blank"><i class="icon ion-ios-download"></i>Manual de tableros</a></li>
+                        <li><a href="https://t.me/+v-Zjc7VOwhxhODRh" target="_blank"><i class="icon fa-solid fa-headset"></i> Soporte</a></li>
+                        <li><a href="{% url 'logout' %}"><i class="icon ion-power"></i> Salir</a></li>
+
+                    <i class=""></i>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div><!-- br-header-right -->
+</div><!-- br-header -->
+<!-- ########## END: HEAD PANEL ########## -->
+
+<!-- ########## START: RIGHT PANEL ########## -->
+<div class="br-sideright">
+</div><!-- br-sideright -->
+<!-- ########## END: RIGHT PANEL ########## --->
+
+<!-- ########## START: MAIN PANEL ########## -->
+<div class="br-mainpanel">
+    <div class="br-pagebody">
+
+        <!--https://www.ordinarycoders.com/blog/article/django-messages-framework-->
+        {% for message in messages %}
+        <div id="mensajes" class="container-fluid p-0"><br>
+            <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="br-pagetitle">
+
+        {% block titulo %}{% endblock titulo %}
+
+    </div><!-- d-flex -->
+
+    <div class="br-pagebody tablero">
+
+        {% block contenido %}{% endblock contenido %}
+
+    </div><!-- br-pagebody -->
+    <footer class="br-footer justify-content-center">
+        <div class="justify-content-center font-italic ">COMANDO OPERACIONAL DE LAS FUERZAS ARMADAS - TABLERO DE COMANDO COFFAA
+            - MÓDULO ELECCIONES
+        </div>
+    </footer>
+</div><!-- br-mainpanel -->
+<!-- ########## END: MAIN PANEL ########## -->
+
+<script src="{% static 'app/lib/jquery-ui/ui/widgets/datepicker.js' %}"></script>
+<script src="{% static 'app/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<script src="{% static 'app/lib/peity/jquery.peity.min.js' %}"></script>
+<!--<script src="{% static 'app/lib/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>-->
+<script src="{% static 'app/lib/moment/min/moment-with-locales.min.js' %}"></script>
+
+<!--Datatables-->
+<script src="{% static 'app/lib/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'app/lib/datatables.net-dt/js/dataTables.dataTables.min.js' %}"></script>
+<script src="{% static 'app/lib/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'app/lib/datatables.net-responsive-dt/js/responsive.dataTables.min.js' %}"></script>
+<script src="{% static 'app/lib/datatables.net-dt/select/dataTables.select.min.js' %}"></script>
+
+<script src="{% static 'app/lib/datatables.net-dt/fijarcolumna/dataTables.fixedColumns.min.js' %}"></script>
+
+<!--Botones para Datatables-->
+<script src="{% static 'app/lib/datatables.net-dt/select/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'app/lib/datatables.net-dt/select/buttons.html5.min.js' %}"></script>
+
+
+<!--<script src="{% static '' %}"></script>-->
+
+<script src="{% static 'app/js/bracket.js' %}"></script>
+
+<!--Select2-->
+<script src="{% static 'app/lib/select2/js/select2.min.js' %}"></script>
+<script src="{% static 'app/lib/select2/js/i18n/es.js' %}"></script>
+
+<!--Barra de porcentaje-->
+<!--<script src="{% static 'sigemco/percentageBars.js' %}"></script>-->
+
+<!--calendario XDSoft DateTimePicker-->
+<!--https://github.com/xdan/datetimepicker-->
+<!--https://xdsoft.net/jqplugins/datetimepicker/-->
+<!--https://simpleisbetterthancomplex.com/tutorial/2019/01/03/how-to-use-date-picker-with-django.-->
+
+<script src="{% static 'app/calendario/jquery.datetimepicker.full.js' %}"></script>
+<link href="{% static 'app/calendario/jquery.datetimepicker.min.css' %}" rel="stylesheet">
+
+
+<script type="text/javascript" src="{% static 'app/js.cookie-2.2.1.min.js' %}"></script>
+
+<!--Sweetalert2-->
+<script type="text/javascript" src="{% static 'sweetalert2/dist/sweetalert2.js' %}"></script>
+
+<!--daterangepicker-->
+<script type="text/javascript" src="{% static 'app/daterangepicker/spanish.js' %}"></script>
+<script type="text/javascript" src="{% static 'app/daterangepicker/daterangepicker.js' %}"></script>
+
+<!--Spin para leaflet-->
+<script type="text/javascript" src="{% static 'app/LeafletSpin/spin.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'app/LeafletSpin/leaflet.spin.min.js' %}"></script>
+
+
+<script type="text/javascript" src="{% static 'app/alertifyjs/build/alertify.min.js' %}"></script>
+
+<!--Modificacion de funcionalidades por nuetro archivo js-->
+<script type="text/javascript" src="{% static 'coffaa/propios.js' %}"></script>
+<!--Touchspin-->
+<script type="text/javascript"
+        src="{% static 'app/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}"></script>
+<!--htmx-->
+<script type="text/javascript" src="{% static 'coffaa/htmx.min.js' %}"></script>
+<!--Bokeh-->
+<script type="text/javascript" src="{% static 'coffaa/bokeh/bokeh-3.0.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'coffaa/bokeh/bokeh-api-3.0.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'coffaa/bokeh/bokeh-gl-3.0.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'coffaa/bokeh/bokeh-mathjax-3.0.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'coffaa/bokeh/bokeh-tables-3.0.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'coffaa/bokeh/bokeh-widgets-3.0.0.min.js' %}"></script>
+<!--https://gasparesganga.com/labs/jquery-loading-overlay/#examples-->
+<script type="text/javascript" src="{% static 'js/loadingoverlay.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'coffaa/underscore-min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/htmx/htmx.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/htmx/ws.js' %}"></script>
+
+<script>
+</script>
+{% block extrajs %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends 'listados.html' %}
+{% block locales %} active {% endblock %}
+{% block sed %} active {% endblock %}
+
+{% load static %}
+{% block titulo %}
+<h4>{{ titulo }}
+</h4>
+{% endblock %}
+{% block extra_css %}
+<style>
+    .mipdf {
+        background-color: burlywood !important;
+    }
+</style>
+    <link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+{% endblock %}
+{% block filtros %}
+<fieldset class="scheduler-border" id="fil">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+        <div class="form-group  col-md-12 mb-0">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-sed'></select>
+        </div>
+    </div>
+</fieldset>
+<br>
+
+{% endblock %}
+{% block cabecera_de_la_tabla %}
+
+<tr>
+    <th scope="col" style="">Distrito</th>
+    <th scope="col" style="">Dirección del SED</th>
+    <th scope="col" style="">sed</th>
+    <th scope="col" style="">localidad</th>
+    <th scope="col" style="">Teléfonos</th>
+    <th scope="col" style="">Acciones</th>
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% if perms.AppElecciones.add_sed %}
+<a href="{{ crear_url }}" class="btn btn-primary btn-with-icon">
+    <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+        <span class="pd-x-5">Agregar</span>
+    </div>
+</a>
+{% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">{% include 'AppElecciones/js_templates/Sed/listado-sed.js' %}</script>
+{% endblock %}

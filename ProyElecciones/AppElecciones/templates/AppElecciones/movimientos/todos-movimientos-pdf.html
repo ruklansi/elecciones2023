@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+    .img-invoice {
+        width: 50px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .head {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    #invoice thead tr th {
+        text-align: left;
+        border-bottom: 1px solid black;
+        border-top: 1px solid black;
+        padding-top: 4px;
+    }
+
+    #invoice thead tr {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    #invoice tbody tr {
+        padding: 0;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .bomba {
+        background-color: red;
+    }
+</style>
+
+<body>
+    <img src="{{ logo }}" class="img-invoice">
+
+    <p class="head">
+        <b>ESTADO MAYOR CONJUNTO DE LAS FUERZAS ARMADAS</b><br>
+        <b>COMANDO OPERACIONAL - TABLERO DE COMANDO - MÓDULO ELECTORAL</b><br>
+        <p class="text-center"><b>LISTADO DE TODOS LOS MOVIMIENTOS</b>
+    </p>
+    <table id="invoice">
+        <thead>
+            <tr>
+                <th style="width: 20%;">Distrito</th>
+                <th style="width: 50%;">Tipo</th>
+                <th style="width: 10%;">Efectivos</th>
+                <th style="width: 10%;">Vehículos</th>
+                <th style="width: 10%;">Inicio</th>
+                <th style="width: 10%;">Fin</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in lista_todos_movimientos %}
+            <tr style="border-top: 1px solid black; padding-top: 4px;">
+                <td class="text-left">{{ d.distrito }}</td>
+                <td class="text-left">{{ d.tipo.tipo }}</td>
+                <td class="text-left">{{ d.efectivos }}</td>
+                <td class="text-left">{{ d.vehiculos }}</td>
+                <td class="text-left">{{ d.inicio | date:'d/m/Y H:i' }}</td>
+                <td class="text-left">{{ d.fin | date:'d/m/Y H:i' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

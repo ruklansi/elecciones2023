@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+ 
+    {% block resumenesYfiltros %}{% endblock %}
+
+    {% block filtros %}{% endblock %}
+   
+<table class="table table-bordered" id="tabla" style="width:100%" name="tabla">
+    <thead>
+        {% block cabecera_de_la_tabla %}{% endblock %}
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+    </tfoot>
+</table>
+    {% block lista_de_bonotones %}
+
+    <a href="{{ crear_url }}" class="btn btn-primary btn-with-icon">
+        <div class="ht-40">
+            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+            <span class="pd-x-5">Nuevo</span>
+        </div>
+    </a>
+
+    <a href="{{ listado_url }}" class="btn btn-success btn-with-icon">
+        <div class="ht-40">
+            <span class="icon wd-40"><i class="fas fa-sync"></i></span>
+            <span class="pd-x-5">Mostar todos</span>
+        </div>
+    </a>
+    {% endblock %}
+{% endblock %}
+
+{% block extrajs %}{% endblock %}

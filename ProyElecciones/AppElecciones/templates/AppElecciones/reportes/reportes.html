@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% block listados %} active {% endblock %}
+
+{% load static %}
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mipdf {
+        background-color: burlywood !important;
+        color: black !important;
+    }
+    .margen_inferior {
+        margin-bottom:15px;
+    }
+</style>
+
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+
+{% endblock %}
+<!--        (1, 'adminsistema'),-->
+<!--        (2, 'cge'),-->
+<!--        (3, 'distrito'),-->
+<!--        (4, 'subdistrito'),-->
+<!--        (5, 'seccion'),-->
+<!--        (6, 'circuito'),-->
+<!--        (7, 'personal'),-->
+<!--        (8, 'logistica'),-->
+<!--        (9, 'personal-CGE'),-->
+<!--        (10, 'material-CGE'),-->
+<!--        (100, 'sin rol'),-->
+{% block contenido %}
+<div class="form-row col">
+    <div class="form-group  col-md-6 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Listado en Excel</legend>
+
+            <div class="form-row col margen_inferior">
+                 {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 %}
+                <div class="form-group  col-md-6 mb-0">
+                        <a href="#" url="{% url 'reporte-locales' %}" id="reporte-locales" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Locales </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="form-row col"></div>
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-nov-grl-excel' %}" id="exportar-nov-grl-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Novedades generales </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row col margen_inferior">
+                   {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 %}
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-nov-en-locales-excel' %}" id="exportar-nov-en-locales-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Novedades en locales </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+                <div class="form-row col"></div>
+                {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 9 %}
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-personal-excel' %}" id="exportar-personal-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Personal </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row col margen_inferior">
+                {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 10 %}
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-veh-propios-excel' %}" id="exportar-veh-propios-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Vehículos provistos </span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="form-row col"></div>
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-veh-contratados-excel' %}" id="exportar-veh-contratados-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Vehículos contratados </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+              <div class="form-row col margen_inferior">
+                  {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 10 %}
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-veh-propios-empleo-excel' %}" id="exportar-veh-propios-empleo-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Empleo vehículos provistos </span>
+                        </div>
+                    </a>
+                </div>
+                <div class="form-row col"></div>
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-veh-contratados-empleo-excel' %}" id="exportar-veh-contratados-empleo-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Empleo vehículos contratados </span>
+                        </div>
+                    </a>
+                </div>
+                  {% endif %}
+            </div>
+            <div class="form-row col margen_inferior">
+                {% if request.user.rol == 2 or request.user.rol == 3 %}
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-movimientos-excel' %}" id="exportar-movimientos-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Movimientos </span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="form-row col"></div>
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-led-excel' %}" id="exportar-led-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">LED/LAME </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row col margen_inferior">
+                  {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 9 %}
+                  <div class="form-group  col-md-6 mb-0">
+                      <a href="{% url 'exportar-resumen-pers-jerarquia-tipo-excel' %}" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Resumen por Jerarquía/Tipo personal </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+                    <div class="form-row col"></div>
+                {% if request.user.rol == 2 or request.user.rol == 3 %}
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-sed-excel' %}" id="exportar-sed-excel" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Suc Elect Dig (SED)</span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row col margen_inferior">
+                  {% if request.user.rol == 2 or request.user.rol == 3 %}
+                  <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-resumen-general' %}" id="exportar-resumen-general" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Resumen general </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+             <div class="form-row col margen_inferior">
+                  {% if request.user.rol == 2 or request.user.rol == 3 %}
+                  <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-lugar-interes' %}" id="exportar-lugar-interes" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Lugares de interés </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+                <div class="form-row col margen_inferior">
+                  {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 9 %}
+                  <div class="form-group  col-md-6 mb-0">
+                    <a href="#" url="{% url 'exportar-guia' %}" id="exportar-guia" class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-file-excel"></i></span>
+                            <span class="pd-x-5">Guia de autoridades </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </fieldset>
+    </div>
+    <div class="form-group  col-md-6 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Reportes en PDF</legend>
+            <div class="form-row col margen_inferior">
+                {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 %}
+                <div class="form-group  col-md-6 mb-0">
+                    <a href="{% url 'generar-todas-novedades-en-local-pdf' %}" target="_blank" class="btn btn-info btn-with-icon mipdf">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-solid fa-file-pdf"></i></span>
+                            <span class="pd-x-5">Novedades en locales</span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+                 {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 or request.user.rol == 9 %}
+                <div class="form-group  col-md-6 mb-0">
+                     <a href="{% url 'exportar-resumen-pers-jerarquia-tipo-pdf' %}" target="_blank" class="btn btn-info btn-with-icon mipdf">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-solid fa-file-pdf"></i></span>
+                            <span class="pd-x-5">Por Jerarquía/Tipo personal</span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="form-row col margen_inferior">
+                 {% if request.user.rol == 2 or request.user.rol == 3 %}
+                <div class="form-group  col-md-6 mb-0">
+                     <a href="{% url 'listar-todos-movimientos-pdf' %}" target="_blank" class="btn btn-info btn-with-icon mipdf">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-solid fa-file-pdf"></i></span>
+                            <span class="pd-x-5">Movimientos </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+                 {% if request.user.rol == 2 or request.user.rol == 3 or request.user.rol == 4 %}
+                 <div class="form-group  col-md-6 mb-0">
+                    <a href="{% url 'listar-todas-novedades-pdf' %}" target="_blank" class="btn btn-info btn-with-icon mipdf">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-solid fa-file-pdf"></i></span>
+                            <span class="pd-x-5">Novedades generales </span>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">{% include 'AppElecciones/js_templates/reportes/reportes.js' %}</script>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block tableros %} active {% endblock %}
+{% block tab_novedades %} active {% endblock %}
+{%load plotly_dash%}
+
+{% load static %}
+{% block titulo %}
+  {% endblock %}
+
+{% block extra_css %}
+<style>
+    .tablero{
+    height: 900px !important;
+
+    }
+    .embed-responsive{
+    height:100%
+
+
+    }
+
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+{%plotly_app_bootstrap  name="novedades"  aspect="1by1"%}
+{% endblock %}
+
+{% block extrajs %}{% endblock %}

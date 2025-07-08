@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% block cge %} active {% endblock %}
+{% load guardian_tags %}
+
+{% load static %}
+{% block titulo %}
+<h4>Comando General Electoral</h4>
+{% endblock %}
+{% block extra_css %}
+<style>
+  .nav-pills .nav-link.active,
+  .show>.nav-pills .nav-link {
+    /*background: #000000 !important*/
+    background: rgb(23, 162, 184);
+  }
+
+
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block contenido %}
+{% get_obj_perms request.user for object as "permiso" %}
+
+<!--Resumen de información solo del CGE-->
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">Resumen de información del Comando General Electoral</legend>
+            <a href="{{ listado_url }}" class="btn btn-success btn-with-icon">
+                <div class="ht-40">
+                    <span class="icon wd-40"><i class="fas fa-sync"></i></span>
+                    <span class="pd-x-5">Actualizar resumen</span>
+                </div>
+            </a>
+            <p></p>
+            <!--tarjetas- https://ajgallego.gitbook.io/bootstrap-4/sistema-de-rejilla/alineacion-->
+            <div class="row row-sm mg-b-20 ">
+
+                <div class="col-sm-12 col-xl-6 mg-t-20 mg-sm-t-0">
+                    <div class="bg-info rounded overflow-hidden">
+                        <br>
+                        <div class="container">
+                            <div class="row ">
+                                <div class="col">
+                                    <p class="tx-10 tx-spacing-3 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                        Personal</p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col">
+                                    <i class="icon ion-person-stalker tx-60 lh-0 tx-white-8"></i>
+                                </div>
+                                <div class="col">
+                  <span class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1"
+                        id="solamente_todo_el_personal_del_cge"></span>
+                                </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="col">
+                                    <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-white-8 mg-b-10">Orgánica
+                                        <locales>
+                                    </p>
+                                    <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1"
+                                       id="solamente_todo_el_personal_organico_del_cge"></p>
+                                </div>
+                                <div class="col">
+                                    <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-white-8 mg-b-10">Reserva
+                                        <locales>
+                                    </p>
+                                    <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1"
+                                       id="solamente_todo_el_personal_de_la_reserva_del_cge">XXX</p>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div><!-- col-3 -->
+
+                <div class="col-sm-12 col-xl-6 mg-t-20 mg-sm-t-0">
+                    <div class="bg-primary rounded overflow-hidden">
+                        <br>
+                        <div class="container">
+                            <div class="row ">
+                                <div class="col">
+                                    <p class="tx-10 tx-spacing-0 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                        Vehículos
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col">
+                                    <i class="ion ion-android-car tx-60 lh-0 tx-white-8"></i>
+                                </div>
+                                <div class="col">
+                                    <span class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1"
+                                          id="solamente_todo_los_veh_del_cge"></span>
+                                </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <div class="col">
+                                    <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                        Propios</p>
+                                    <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1"
+                                       id="solamente_todo_los_veh_propios_del_cge">
+                                    </p>
+                                </div>
+                                <div class="col">
+                                    <p class="tx-10 tx-spacing-1 tx-mont tx-semibold tx-uppercase tx-white-8 mg-b-10">
+                                        Contratados
+                                    </p>
+                                    <p class="tx-24 tx-white tx-lato tx-bold mg-b-0 lh-1"
+                                       id="solamente_todo_los_veh_contratados_del_cge">
+                                        XXX</p>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+                </div><!-- col-3 -->
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+
+<!--Distribución de personal, Vehiculos provistor y Vehículos Contratados-->
+<div class="form-row">
+    <div class="form-group col-md-12 mb-0">
+        <fieldset class="scheduler-border">
+            <legend class="scheduler-border filtros">
+                Autoridades, Distribución de Personal, Reserva y Empleo de vehículos Provistos y Contratados
+            </legend>
+            <!--El complemento de pestañas también funciona con píldoras--ese usar-combinarlo para centrarlos y demas-->
+            <!--https://getbootstrap.com/docs/4.5/components/navs/#vertical-->
+            <!--<ul class="nav  nav-pills justify-content-center nav-fill mb-3" id="pills-tab" role="tablist">-->
+            <ul class="nav nav-tabs nav-pills nav-fill" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="pills-guia-cge-tab" data-toggle="pill" href="#pills-guia-cge" role="tab"
+                       aria-controls="pills-guia-cge" aria-selected="false">Autoridades</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-organizacion-tab" data-toggle="pill" href="#pills-organizacion"
+                       role="tab" aria-controls="pills-organizacion" aria-selected="true">Distribución de Personal</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-reserva-tab" data-toggle="pill" href="#pills-reserva" role="tab"
+                       aria-controls="pills-reserva" aria-selected="false">Reserva</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link " id="pills-vpropios-tab" data-toggle="pill" href="#pills-vpropios" role="tab"
+                       aria-controls="pills-vpropios" aria-selected="false">Empleo de vehículos provistos</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-vcontratados-tab" data-toggle="pill" href="#pills-vcontratados"
+                       role="tab"
+                       aria-controls="pills-vcontratados" aria-selected="false">Empleo de vehículos contratados</a>
+                </li>
+            </ul>
+
+
+
+
+            <div class="tab-content" id="pills-tabContent">
+                <!--            Guia autoridades                   -->
+                <div class="tab-pane fade show active" id="pills-guia-cge" role="tabpanel" aria-labelledby="pills-guie-cge-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-guia-cge" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="">Cargo</th>
+                            <th scope="col" style="">Organización</th>
+                            <th scope="col" style="">Personal designado</th>
+                            <th scope="col" style="">Teléfono directo/interno</th>
+                            <th scope="col" style="">GDE</th>
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    {% if "admin_pers_cge_cdogrlelect" in permiso %}
+                    <div class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="mostrar-formulario-guia-cge"
+                                    data-url="{% url 'agregar-persona-guia-cge' %}" data-toggle="modal" data-target="">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade show " id="pills-organizacion" role="tabpanel" aria-labelledby="pills-organizacion-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-distribucion-personal-cge" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="">Cargo</th>
+                            <th scope="col" style="">Designación</th>
+                            <th scope="col" style="">Personal designado</th>
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    <div class="btn btn-info btn-with-icon">
+
+                        {% if "admin_pers_cge_cdogrlelect" in permiso %}
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat"
+                                    id="mostrar-formulario-distribucion-personal-cge"
+                                    data-url="{% url 'crear-distribucion-en-cge'%}" data-toggle="modal" data-target="">
+                                Agregar
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="tab-pane fade show" id="pills-reserva" role="tabpanel" aria-labelledby="pills-reserva-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-reserva-cge" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="">Personal designado</th>
+                            <th scope="col" style="">Observaciones</th>
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    {% if "admin_pers_cge_cdogrlelect" in permiso %}
+                    <div class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="mostrar-formulario-reserva-cge"
+                                    data-url="{% url 'crear-reserva-en-cge'%}" data-toggle="modal" data-target="">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade" id="pills-vpropios" role="tabpanel" aria-labelledby="pills-vpropios-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-vehiculos-propios-cge" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="">Vehículo</th>
+                            <th scope="col" style="">NI</th>
+                            <th scope="col" style="">Zona de trabajo</th>
+<!--                            <th scope="col" style="">conductor</th>-->
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot></tfoot>
+                    </table>
+                    <br>
+                    {% if "admin_veh_cge_cdogrlelect" in permiso %}
+                    <div class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="agregar-vehiculos-propios-cge"
+                                    data-url="{% url 'crear-vhpropios-en-cge' %}" data-toggle="modal" data-target="">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="tab-pane fade" id="pills-vcontratados" role="tabpanel" aria-labelledby="pills-vcontratados-tab">
+                    <br>
+                    <table class="table table-bordered" id="tabla-vehiculos-contratados-cge" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th scope="col" style="">Vehículo</th>
+                            <th scope="col" style="">Patente</th>
+                            <th scope="col" style="">zona de trabajo</th>
+<!--                            <th scope="col" style="">responsable</th>-->
+                            <th scope="col" style="">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                        <tfoot>
+
+                        </tfoot>
+                    </table>
+                    <br>
+                    {% if "admin_veh_cge_cdogrlelect" in permiso %}
+                    <div class="btn btn-info btn-with-icon">
+                        <div class="ht-40">
+                            <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+                            <button type="button" class="btn btn-info btn-flat" id="agregar-vehiculos-contratados-cge"
+                                    data-url="{% url 'crear-vhcontratados-en-cge' %}" data-toggle="modal"
+                                    data-target="">
+                                Agregar
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+    {% include 'AppElecciones/js_templates/CdoGrlElect/crud-distribucionpersonal-CdoGrlElect.js' %}
+
+</script>
+<script type="text/javascript">{% include 'AppElecciones/js_templates/CdoGrlElect/crud-reserva-CdoGrlElect.js' %}
+
+</script>
+<script type="text/javascript">{% include 'AppElecciones/js_templates/CdoGrlElect/crud-veh-propios-CdoGrlElect.js' %}
+
+</script>
+<script type="text/javascript">
+    {% include 'AppElecciones/js_templates/CdoGrlElect/crud-veh-contratados-CdoGrlElect.js' %}
+
+</script>
+<script type="text/javascript">{% include 'AppElecciones/js_templates/CdoGrlElect/resumen_tarjetas_CdoGrlElect.js' %}
+
+</script>
+
+<script type="text/javascript">{% include 'AppElecciones/js_templates/CdoGrlElect/crud-guia-autoridades-CdoGrlElect.js' %}
+
+</script>
+
+<!--El modal que se usa para al CRUD de la Distribucion del personal.-->
+<div class="modal fade" id="modal-distribucion-personal-cge">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!--El modal que se usa para al CRUD de la Reserva del personal.-->
+<div class="modal fade" id="modal-reserva-cge">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!--El modal que se usara para al CRUD de la guia de autoridades-->
+<div class="modal fade" id="modal-guia-cge">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!--El modal que se usara para al CRUD de los vehiculos propios-->
+<div class="modal fade" id="modal-vpropios-cge">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<!--El modal que se usara para al CRUD de los vehiculos contratados-->
+<div class="modal fade" id="modal-vcontratados-cge">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}

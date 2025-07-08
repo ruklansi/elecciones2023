@@ -1,0 +1,119 @@
+{% load static %}
+
+<style>
+    .nav-item .active { background-color:rgb(23, 162, 184) !important }
+    .asteriskField {
+        color: red;
+    }
+
+
+</style>
+<body>
+<div class="modal-header">
+    <h5 class="modal-title tx-primary">Detalles de tareas como conductor</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            Grado:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ persona.grado }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            Nombres:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ persona.nombre }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            Apellido:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ persona.apellido }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            DNI:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ persona.dni }}
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            Fuerza:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ persona.fuerza }}
+        </div>
+    </div>
+    <br>
+    {% if persona.cge_veh_propio %}
+    <h5 class="tx-black">Tareas en el CGE usando vehículos provistos</h5>
+    {% endif %}
+    {% for cvp in  persona.cge_veh_propio %}
+    <span class="tx-primary">{{ cvp }}</span><br>
+    {% endfor %}
+
+    {% if persona.cge_veh_contratado %}
+    <h5 class="tx-black">Tareas en el CGE usando vehículos contratados</h5>
+    {% endif %}
+    {% for cvc in  persona.cge_veh_contratado %}
+    <span class="tx-primary">{{ cvc }}</span><br>
+    {% endfor %}
+
+    {% if persona.distrito_veh_propio %}
+    <h5 class="tx-black">Tareas en Distrito usando vehículos provistos</h5>
+    {% endif %}
+    {% for dvp in  persona.distrito_veh_propio %}
+    <span class="tx-primary">{{ dvp }}</span><br>
+    {% endfor %}
+
+    {% if persona.distrito_veh_contratado %}
+    <h5 class="tx-black">Tareas en Distrito usando vehículos contratados</h5>
+    {% endif %}
+    {% for dvc in  persona.distrito_veh_contratado %}
+    <span class="tx-primary">{{ dvc }}</span><br>
+    {% endfor %}
+
+    {% if persona.subdistrito_veh_propio %}
+    <h5 class="tx-black">Tareas en Subdistrito usando vehículos provistos</h5>
+    {% endif %}
+    {% for svp in subdistrito_veh_propio %}
+    <span class="tx-primary">{{ svp }}</span><br>
+    {% endfor %}
+
+    {% if persona.subdistrito_veh_contratado %}
+    <h5 class="tx-black">Tareas en Subdistrito usando vehículos contratado</h5>
+    {% endif %}
+    {% for svc in persona.subdistrito_veh_contratado %}
+    <span class="tx-primary">{{ svc }}</span><br>
+    {% endfor %}
+
+    {% if persona.seccion_veh_propio %}
+    <h5 class="tx-black">Tareas en Secciones usando vehículos provistos</h5>
+    {% endif %}
+    {% for sevp in persona.seccion_veh_propio %}
+    <span class="tx-primary">{{ sevp }}</span><br>
+    {% endfor %}
+
+    {% if persona.seccion_veh_contratado %}
+    <h5 class="tx-black">Tareas en Secciones usando vehículos contratados</h5>
+    {% endif %}
+    {% for sevc in persona.seccion_veh_contratado %}
+    <span class="tx-primary">{{ sevc }}</span><br>
+    {% endfor %}
+</div>
+<div class="modal-footer"></div>
+
+</body>

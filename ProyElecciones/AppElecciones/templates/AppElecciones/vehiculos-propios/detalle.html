@@ -1,0 +1,77 @@
+{% load static %}
+
+<style>
+    .nav-item .active { background-color:rgb(23, 162, 184) !important }
+    .asteriskField {
+        color: red;
+    }
+
+</style>
+<body>
+<div class="modal-header">
+    <h5 class="modal-title tx-primary">Detalle del empleo de vehículo propios</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            Tipo de vehículo:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ vehiculo.tipo }}
+        </div>
+    </div>
+     <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            Unidad:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ vehiculo.unidad }}
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-4 mb-0 tx-black">
+            Patente:
+        </div>
+        <div class="form-group col-md-8 mb-0 tx-primary">
+            {{ vehiculo.patente }}
+        </div>
+    </div><br>
+        {% if vehiculo.cge %}
+        <h5 class="tx-black">Empleado en el CGE</h5>
+    {% endif %}
+    {% for c in vehiculo.cge %}
+    <span class="tx-primary">{{ c }}</span><br>
+    {% endfor %}
+
+    {% if vehiculo.distrito %}
+        <br><h5 class="tx-black">Empleado en el Distrito </h5>
+    {% endif %}
+
+    {% for d in vehiculo.distrito %}
+    <span class="tx-primary">{{ d }}</span><br>
+    {% endfor %}
+
+    {% if vehiculo.subdistrito %}
+        <br><h5 class="tx-black">Empleado en el Subdistrito </h5>
+    {% endif %}
+
+    {% for s in vehiculo.subdistrito %}
+    <span class="tx-primary">{{ s }}</span><br>
+    {% endfor %}
+
+    {% if vehiculo.seccion %}
+        <br><h5 class="tx-black">Empleado en ls Seccion </h5>
+    {% endif %}
+
+    {% for e in vehiculo.seccion %}
+    <span class="tx-primary">{{ e }}</span><br>
+    {% endfor %}
+</div>
+<div class="modal-footer"></div>
+
+</body>

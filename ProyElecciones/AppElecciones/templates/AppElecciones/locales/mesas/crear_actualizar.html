@@ -1,0 +1,67 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+<style>
+    .nav-item .active { background-color:rgb(23, 162, 184) !important }
+    .asteriskField {
+        color: red;
+    }
+
+</style>
+<body>
+<!--Esta accion viene del back-end del método get de las vista para usar el este mismo form para crear y editar-->
+{% if accion == 'editar'%}
+<form data-url="{% url 'actualizar-mesas-en-local' form.instance.pk %}" method="post"
+      class="actualizar-mesa" novalidate>
+    {% endif %}
+    {% if accion == 'crear'%}
+    <form data-url="{% url 'agregar-mesas-en-local' %}" method="post" class="agregar-mesa" novalidate>
+        {% endif %}
+        {% csrf_token %}
+        <div class="modal-header">
+            {% if accion == 'editar'%}
+            <h5 class="modal-title">Modificar novedades en el local</h5>
+            {% endif %}
+            {% if accion == 'crear'%}
+            <h5 class="modal-title">Agregar novedades en el local</h5>
+            {% endif %}
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container bg-faded">
+                <h6 class="text-center asteriskField">* Campos obligatorios</h6>
+            </div>
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                {{ error }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <!--{% crispy form %}-Usar esta sola línea para mostrar el formulario como viene-->
+            <div class="form-row">
+                <div class="form-group col-md-12 mb-0">
+                    {{ form.mesas|as_crispy_field }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-12 mb-0">
+                    {{ form.voto|as_crispy_field }}
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn btn-primary btn-with-icon">
+                <div class="ht-40">
+                    <span class="icon wd-40"><i class="fas fa-save"></i></span>
+                    <button type="submit" class="btn btn-primary btn-flat">
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>

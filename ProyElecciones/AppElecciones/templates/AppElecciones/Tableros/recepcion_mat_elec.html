@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block tableros %} active {% endblock %}
+{% block tab_rece_mat %} active {% endblock %}
+{%load plotly_dash%}
+
+{% load static %}
+{% block titulo %}
+  {% endblock %}
+
+{% block extra_css %}
+<style>
+    .tablero{
+    height: 880px !important;
+
+    }
+    .embed-responsive{
+    height:100%
+
+
+    }
+
+</style>
+{% endblock %}
+
+{% block contenido %}
+
+{%plotly_app_bootstrap  name="recepcionMatElec"  aspect="1by1"%}
+{% endblock %}
+
+{% block extrajs %}{% endblock %}

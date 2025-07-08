@@ -1,0 +1,10 @@
+    td.details-control {
+        background: url('lib/datatables.net-dt/images/details_open.png') no-repeat center center;
+        cursor: pointer;
+      }
+
+      tr.shown td.details-control {
+        background: url('lib/datatables.net-dt/images/details_close.png') no-repeat center center;
+      }
+
+

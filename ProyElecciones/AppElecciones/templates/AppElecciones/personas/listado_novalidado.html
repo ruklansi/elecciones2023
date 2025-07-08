@@ -1,0 +1,68 @@
+{% extends 'listados.html' %}
+{% block personal %} active {% endblock %}
+{% block personal_novalidado %} active {% endblock %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .pepe {
+        color: white !important;
+    }
+    .titulo {
+        color: darkkhaki;
+        position: relative !important;
+        left: 45% !important;
+    }
+    #buscar_persona_dni {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+
+
+{% block filtros %}
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+
+        <div class="form-group  col-md-12 mb-0">
+            <label class="filtros">Fuerza:</label>
+            <select id='filtro-fuerza-para-personal'></select>
+        </div>
+    </div>
+</fieldset>
+<br>
+{% endblock %}
+
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th scope="col" style="">Grado</th>
+    <th scope="col" style="">Nombre</th>
+    <th scope="col" style="">Apellido</th>
+    <th scope="col" style="">DNI</th>
+    <th scope="col" style="">Fuerza</th>
+    <th scope="col" style="">Teléfono</th>
+    <th scope="col" style="">Validar</th>
+</tr>
+{% endblock %}
+
+{% block lista_de_bonotones %}
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">{% include 'AppElecciones/js_templates/personas/listado-personal-no-validado.js' %}</script>
+<div class="modal fade" id="modal-detalle-persona-como-conductor">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}

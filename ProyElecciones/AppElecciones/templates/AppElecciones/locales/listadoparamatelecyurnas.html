@@ -1,0 +1,92 @@
+{% extends 'listados.html' %}
+{% block locales %} active {% endblock %}
+{% block locales_controlurnas %} active {% endblock %}
+
+{% load static %}
+{% block titulo %}
+    <h4>{{ titulo }}</h4>
+{% endblock %}
+{% block extra_css %}
+<style>
+    .estilo_del_boton_ejecutar {
+        background-color: #17A2B8 !important;
+        color: white !important;
+    }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+{% endblock %}
+{% block filtros %}
+
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+        <div class="form-group  col-md-3 mb-0" id="dis">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-recmatele'></select>
+        </div>
+        <div class="form-group  col-md-3 mb-0" id="sub">
+            <label class="filtros">Subdistritos:</label>
+            <select id='filtro-subdistrito-recmatele'></select>
+        </div>
+        <div class="form-group  col-md-3 mb-0">
+            <label class="filtros">Sección:</label>
+            <select id='filtro-seccion-recmatele'></select>
+        </div>
+         <div class="form-group  col-md-3 mb-0">
+            <label class="filtros">Circuito:</label>
+            <select id='filtro-circuito-recmatele'></select>
+        </div>
+    </div>
+    <div class="form-row">
+    <div class="form-group  col-md-12 mb-0">
+        <label class="filtros">Estados:</label>
+        <select id='filtro-por-estado-urnas'>
+            <option value="">Todos</option>';
+            <option value='recmatele'>Material electoral recibido</option>';
+            <option value='norecmatele'>Material electoral no recibido</option>';
+            <option value='transmitiotelegrama'>Transmitió telegrama</option>';
+            <option value='notransmitiotelegrama'>No transmitió telegrama</option>';
+            <option value='entregarurna'>Urnas entregadas</option>';
+            <option value='noentregarurna'>Urnas no entregadas</option>';
+        </select>
+    </div>
+</div>
+</fieldset>
+<div class="form-row" id="accion_urnas">
+    <div class="form-group  col-md-4 mb-0">
+        <label class="filtros">Acción:</label>
+        <select id='accion-urnas'>
+            <option value="">Seleccione</option>';
+            <option value='recmatele'>Recibió material electoral</option>';
+            <option value='norecmatele'>No recibió material electoral</option>';
+            <option value='transmitiotelegrama'>Transmitió telegrama</option>';
+            <option value='notransmitiotelegrama'>No transmitió telegrama</option>';
+            <option value='entregarurna'>Entregó urnas al correo</option>';
+            <option value='noentregarurna'>No entregó urnas al correo</option>';
+        </select>
+    </div>
+</div>
+<br>
+{% endblock %}
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th><input type="checkbox" title="Selecciona todos los locales mostrados" class="seleccionarTodosLocales1 todos" name="seleccionarTodosLocales1" value="all"></th>
+    <th scope="col" style="">Nombre</th>
+    <th scope="col" style="">distrito</th>
+    <th scope="col" style="">subdistrito</th>
+    <th scope="col" style="">Seccion</th>
+    <th scope="col" style="">Circuito</th>
+    <th scope="col" style="">Urnas</th>
+    <th scope="col" style="">Transmite en el local</th>
+    <th scope="col" style="">Recibió material electoral</th>
+    <th scope="col" style="">Transmitió telegrama</th>
+    <th scope="col" style="">Entregó urnas al correo</th>
+</tr>
+{% endblock %}
+
+{% block lista_de_bonotones %}
+{% endblock %}
+
+{% block extrajs %}
+    <script type="text/javascript">{% include 'AppElecciones/js_templates/locales/listadomatelecturnas.js' %}</script>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'listados.html' %}
+
+{% block vehiculos %} active {% endblock %}
+{% block vehiculos_propios %} active {% endblock %}
+
+
+{% load static %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+{% block extra_css %}
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% block filtros %}
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row col">
+        <div class="form-group  col-md-4 mb-0" id="dis">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-veh-propio'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Se esta empleando:</label>
+            <select id='filtro-con-sin-destino-para-vhpropio'>
+                <option value="">Todos</option>
+                ';
+                <option value="conpuesto">Si</option>
+                ';
+                <option value="sinpuesto">No</option>
+                ';
+            </select>
+        </div>
+<!--        <div class="form-group  col-md-4 mb-0">-->
+<!--            <label class="filtros">Fuerza:</label>-->
+<!--            <select id='filtro-fuerza-para-vhpropio'>-->
+<!--            </select>-->
+<!--        </div>-->
+    </div>
+</fieldset>
+<br>
+{% endblock %}
+
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th scope="col" style="">Distrito</th>
+    <th scope="col" style="">Tipo</th>
+    <th scope="col" style="">NI o PATENTE</th>
+    <th scope="col" style="">Unidad</th>
+    <th scope="col" style="">Sensor de rastreo</th>
+    <th scope="col" style="">Troncal</th>
+    <th scope="col" style="">Se esta empleando</th>
+
+
+    <!--    {% if request.user.roles != 6 %}-->
+    <th scope="col" style="">Acciones</th>
+
+    <!--    {% else %}-->
+    <!--    <th scope="col" style=""></th>-->
+    <!--    {% endif %}-->
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% if perms.AppElecciones.add_vehiculospropios %}
+<a href="{{ crear_url }}" class="btn btn-primary btn-with-icon">
+    <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+        <span class="pd-x-5">Agregar</span>
+    </div>
+</a>
+{% endif %}
+<!--<i data-toggle="tooltip" data-placement="right" title="Exporta TODO el listado de vehículos sin tener en cuenta los filtros. Para aplicar filtros en Excel seleccione la primer
+fila (Los encabezados), luego vaya a la opción Ordenar y Filtrar y elija Filtro" class="fas fa-info-circle"
+    style="font-size:15px;color:skyblue"></i>-->
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript">
+    {% include 'AppElecciones/js_templates/vehiculospropios/listado-vehiculos-propios.js' %}
+</script>
+<div class="modal fade" id="modal-detalle-veh-propio">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}

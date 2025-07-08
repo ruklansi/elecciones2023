@@ -1,0 +1,120 @@
+{% extends 'listados.html' %}
+
+{% block circuitos %} active {% endblock %}
+{% load static %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .color_botones_situacion {
+        background-color: #17A2B8 !important;
+        color: #fff !important;
+    }
+    th {
+        text-align: center;
+    }
+    .sin_locales{
+   color: rgb(255, 128, 128);;
+    font-size: 1.3125rem;
+  }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet"/>
+{% endblock %}
+{% block filtros %}
+
+<div class="form-row">
+    <div class="form-group  col-md-12 mb-0">
+        <p class="sin_locales">Tener en cuenta para la carga de datos:</p>
+        <p class="sin_locales">No deben quedar circuitos sin locales asignados -
+            {% if circuitos_sin_local > 0%}
+                Su Distrito/Subditrito tiene {{circuitos_sin_local}} circuitos sin locales asignados.
+            {% else %}
+                Su Distrito/Subditrito no tiene circuitos sin locales asignados.
+            {% endif %}</p>
+    </div>
+</div>
+
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border filtros">Filtros</legend>
+    <div class="form-row">
+        <div class="form-group  col-md-4 mb-0" id="dis">
+            <label class="filtros">Distritos:</label>
+            <select id='filtro-distrito-en-circuito'></select>
+        </div>
+        <div class="form-group  col-md-4 mb-0" id="sub">
+            <label class="filtros">Subdistritos:</label>
+            <select id='filtro-subdistrito-en-circuito'></select>
+        </div>
+
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Sección:</label>
+            <select id='filtro-seccion-en-circuito'></select>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Situación:</label>
+            <select id='filtro-circuito-por-situacion'>
+                <option value="">Todos</option>
+                <option value="Actividades no iniciadas">Actividades no iniciadas</option>
+                <option value="Inicio despliegue">Inicio despliegue</option>
+                <option value="Desplegado">Desplegado</option>
+                <option value="Inicio repliegue">Inicio repliegue</option>
+                <option value="Replegado">Replegado</option>
+            </select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Urnas en el LED:</label>
+            <select id='filtro-por-urnas-enled'>
+                <option value="">Todos</option>
+                <option value="entregadas">Entregadas</option>
+                <option value="noentregadas">No entregadas</option>
+            </select>
+        </div>
+        <div class="form-group  col-md-4 mb-0">
+            <label class="filtros">Locales</label>
+            <select id='filtro-por-cantlocal'>
+                <option value="">Todos</option>
+                <option value="conlocal">Con local</option>
+                <option value="sinlocal">Sin local</option>
+            </select>
+        </div>
+    </div>
+</fieldset>
+<br>
+{% endblock %}
+
+{% block cabecera_de_la_tabla %}
+<tr>
+    <th><input type="checkbox" title="Selecciona todos los circuitos mostrados" class="seleccionarTodosCircuitos todos" name="seleccionarTodosCircuitos" value="all"></th>
+    <th scope="col" style="">Situación</th>
+    <th scope="col" style="">Urnas en el LED</th>
+    <th scope="col" style="">Distrito</th>
+    <th scope="col" style="">Subdistrito</th>
+    <th scope="col" style="">Seccion</th>
+    <th scope="col" style="">Circuito</th>
+    <th scope="col" style="">cant locales</th>
+    <th scope="col" style="">Acciones</th>
+</tr>
+{% endblock %}
+<!--Sobreescribo el bloque de botones para no mostrar el boton de agregar-->
+{% block lista_de_bonotones %}
+{% if perms.AppElecciones.add_circuito %}
+<a href="{{ crear_url }}" class="btn btn-primary btn-with-icon">
+    <div class="ht-40">
+        <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+        <span class="pd-x-5">Agregar</span>
+    </div>
+</a>
+{% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+
+<script type="text/javascript">{% include 'AppElecciones/js_templates/circuitos/listado_circuitos.js' %}</script>
+
+{% endblock %}

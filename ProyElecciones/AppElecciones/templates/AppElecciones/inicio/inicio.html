@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block titulo %}
+    <h4>{{ titulo }}</h4>
+{% endblock %}
+
+{% block extra_css %}{% endblock %}
+
+{% block contenido %}
+    <img class="rounded mx-auto d-block" width="50%" height="50%" alt="Responsive image"   src="{% static 'coffaa/logo.png' %}" />
+{% endblock %}
+
+{% block extrajs %}{% endblock %}

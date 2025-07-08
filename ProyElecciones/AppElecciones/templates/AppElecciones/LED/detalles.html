@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% block led %} active {% endblock %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+{% block cabecera %}
+    {{ form.media }}
+    {% load leaflet_tags %}
+    {% leaflet_js plugins="buscador"%}
+    {% leaflet_css plugins="buscador"%}
+{% endblock %}
+
+{% block titulo %}
+<h4>{{ titulo }}</h4>
+{% endblock  %}
+
+{% block extra_css %}
+<style>
+  .nav-pills .nav-link.active,
+  .show>.nav-pills .nav-link {
+    /*background: #000000 !important*/
+    background: rgb(23, 162, 184);
+  }
+  .mipdf {
+    background-color: burlywood !important;
+  }
+</style>
+<link href="{% static 'coffaa/estilospropios.css' %}" rel="stylesheet" />
+
+{% endblock %}
+
+{% block contenido %}
+<fieldset class="scheduler-border">
+ <legend class="scheduler-border filtros">Datos de ubicación</legend>
+<div class="form-row">
+  <div class="form-group col-md-6 mb-0">
+    <br><br><br>
+    <div class="form-row">
+      <h4><p>Distrito: {{ object.distrito }}</p></h4>
+    </div>
+    <div class="form-row">
+      <h4><p>Dirección: {{ object.direccion }}</p></h4>
+    </div>
+    <div class="form-row">
+      <h4><p>Tipo: {{ object.tipo }}</p></h4>
+    </div>
+    <div class="form-row">
+      <h4><p>Observaciones: {{ object.obs }}</p></h4>
+    </div>
+  </div>
+  <div class="form-group col-md-6 mb-0">
+    <div class="form-row">
+      <div class="form-group col-md-6 mb-0">
+        {% if object.ubicacion.y %}
+        <p>Latitud: {{ object.ubicacion.y }}</p>
+        {% else %}
+        <p>Latitud: Sin dato</p>
+        {% endif %}
+      </div>
+      <div class="form-group col-md-6 mb-0">
+        {% if object.ubicacion.x %}
+        <p>Longitud: {{ object.ubicacion.x }}</p>
+        {% else %}
+        <p>Longitud: Sin dato</p>
+        {% endif %}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-12 mb-0">
+        {% leaflet_map "yourmap" %}
+      </div>
+    </div>
+  </div>
+ </div>
+ </fieldset>
+ 
+ <!--Seguridad en el led tanto de las FFAA como de Seguridad-->
+<div class="form-row">
+  <div class="form-group col-md-12 mb-0">
+    <fieldset class="scheduler-border">
+      <legend class="scheduler-border filtros">Datos de seguridad</legend>
+      <!--El complemento de pestañas también funciona con píldoras--ese usar-combinarlo para centrarlos y demas-->
+      <!--https://getbootstrap.com/docs/4.5/components/navs/#vertical-->
+      <!--<ul class="nav  nav-pills justify-content-center nav-fill mb-3" id="pills-tab" role="tablist">-->
+      <ul class="nav nav-tabs nav-pills nav-fill" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+            aria-controls="pills-home" aria-selected="true">Fuerzas Armadas</a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab"
+            aria-controls="pills-profile" aria-selected="false">Fuerzas de Seguridad</a>
+        </li>
+      </ul>
+      <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+          <br>
+          <table class="table table-bordered" id="tabla-seg-led-ffaa" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col" style="">Fecha de inicio</th>
+                <th scope="col" style="">Fecha de fin</th>
+                <th scope="col" style="">Fuerzas Armadas</th>
+                <th scope="col" style="">Cantidad de personal</th>
+                <th scope="col" style="">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+          <br>
+          {% if perms.AppElecciones.add_segenledfuerzaarmada %}
+          <div class="btn btn-info btn-with-icon" id='boton-agregar'>
+            <div class="ht-40">
+              <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+              <button type="button" class="btn btn-info btn-flat" id="mostrar-modal-seg-led-ffaa"
+                data-url="{% url 'agregar-seg-led-ffaa'%}" data-toggle="modal" data-target="#segexterna">
+                Agregar
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="tab-pane fade pepe" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+          <br>
+          <table class="table table-bordered" id="tabla-seg-led-ffseg" style="width:100%">
+            <thead>
+              <tr>
+                <th scope="col" style="">Fecha de inicio</th>
+                <th scope="col" style="">Fecha de fin</th>
+                <th scope="col" style="">Fuerzas De Seguridad</th>
+                <th scope="col" style="">Cantidad de personal</th>
+                <th scope="col" style="">Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot></tfoot>
+          </table>
+          <br>
+          {% if perms.AppElecciones.add_segenledfuerzaseguridad %}
+          <div class="btn btn-info btn-with-icon">
+            <div class="ht-40">
+              <span class="icon wd-40"><i class="fas fa-plus"></i></span>
+              <button type="button" class="btn btn-info btn-flat" id="mostrar-modal-seg-led-ffseg"
+                data-url="{% url 'agregar-seg-led-ffseg'%}" data-toggle="modal" data-target="#segexterna">
+                Agregar
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </fieldset>
+  </div>
+</div>
+
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+   $(window).on('map:init', function (e) {
+    var detail = e.detail;
+    //Pagina para configurar geoserarch
+    //https://stackoverflow.com/questions/52588652/how-to-add-leaflet-geosearch-control-in-django-admin
+    const search = new GeoSearch.GeoSearchControl({
+      //provider: new GeoSearch.OpenStreetMapProvider(),
+      provider: new GeoSearch.EsriProvider(),
+      searchLabel: 'Ingrese la dirección...',
+      notFoundMessage: 'No hay resultados',
+      retainZoomLevel: true,
+      showMarker: true,
+      selected: 0,
+      autoClose: true,
+      keepResult: true
+    });
+    detail.map.addControl(search);
+    let longitud = parseFloat({{ object.ubicacion.x | safe }})
+  let latitud = parseFloat({{ object.ubicacion.y | safe }})
+
+  detail.map.setView([latitud, longitud], 18);
+  L.marker([latitud, longitud]).addTo(detail.map);
+  });
+  
+  </script>
+
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/LED/crud-seg-led-ffaa.js' %}</script>
+  <script type="text/javascript">{% include 'AppElecciones/js_templates/LED/crud-seg-led-ffseg.js' %}</script>
+
+    <!--El modal que se usara para al CRUD de Seguridad de las FFAA en el LED - Anular tabindex='-1' sino no funciona select2-->
+    <div class="modal fade" id="modal-led-seg-ffaa">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+    <!--El modal que se usara para al CRUD de Seguridad de las FFSeg en el LED - Anular tabindex='-1' sino no funciona select2-->
+    <div class="modal fade" id="modal-led-seg-ffseg">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+{% endblock %}
